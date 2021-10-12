@@ -2,12 +2,10 @@ package entity
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Orders struct {
-	ID          uuid.UUID
+	ID          string
 	Title       string
 	Description string
 	Deadline    time.Time
@@ -15,7 +13,7 @@ type Orders struct {
 
 func NewOrder(title string, description string, deadline time.Time) *Orders {
 	o := &Orders{
-		ID:          NewUUID(),
+		ID:          NewUUID().String(),
 		Title:       title,
 		Description: description,
 		Deadline:    deadline,

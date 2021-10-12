@@ -3,6 +3,7 @@ package controller
 import (
 	"clean/internal/usecase/orders"
 	"clean/internal/usecase/requirements"
+	"clean/pkg/logger"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -12,11 +13,12 @@ type Controller struct {
 	router       *mux.Router
 	order        orders.UseCase
 	requirements requirements.UseCase
+	logger       *logger.LoggerInstance
 }
 
-func NewController(o orders.UseCase, r requirements.UseCase) *Controller {
+func NewController(o orders.UseCase, r requirements.UseCase, l *logger.LoggerInstance) *Controller {
 	router := mux.NewRouter().StrictSlash(true)
-	controller := &Controller{router: router, order: o, requirements: r}
+	controller := &Controller{router: router, order: o, requirements: r, logger: l}
 	return controller
 }
 
