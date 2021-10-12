@@ -3,19 +3,15 @@ module clean
 go 1.14
 
 require (
-	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535
-	github.com/codegangsta/negroni v0.3.0
-	github.com/eminetto/clean-architecture-go v0.0.0-20200312132632-3195811c74a3
-	github.com/go-sql-driver/mysql v1.5.0
-	github.com/golang/mock v1.4.4
+	github.com/eminetto/clean-architecture-go-v2 v0.0.0-20210831113413-3838caaab079
+	// github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/go-sql-driver/mysql v1.6.0
+	// github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.3.0
-	github.com/gorilla/context v1.1.1
-	github.com/gorilla/mux v1.6.2
-	github.com/jimlawless/whereami v0.0.0-20160417220522-aebf70d4a772 // indirect
-	github.com/juju/mgosession v0.0.0-20170206150231-9ae6df2882cd
-	github.com/prometheus/client_golang v1.7.1
-	github.com/stretchr/testify v1.6.1
-	golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2
-	gopkg.in/mgo.v2 v2.0.0-20180705113604-9856a29383ce
-	rsc.io/quote/v3 v3.1.0 // indirect
+	github.com/gorilla/mux v1.8.0
+// github.com/prometheus/common v0.31.1 // indirect
+// github.com/prometheus/procfs v0.7.3 // indirect
+// golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
+// golang.org/x/sys v0.0.0-20211007075335-d3039528d8ac // indirect
+// google.golang.org/protobuf v1.27.1 // indirect
 )
