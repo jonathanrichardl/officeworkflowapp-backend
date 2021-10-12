@@ -5,10 +5,10 @@ type Requirements struct {
 	Request         string
 	ExpectedOutcome string
 	Status          bool
-	OrderID         ID
+	OrderID         string
 }
 
-func NewRequirement(request string, expectedOutcome string, orderID ID) *Requirements {
+func NewRequirement(request string, expectedOutcome string, orderID string) *Requirements {
 	r := &Requirements{
 		Request:         request,
 		ExpectedOutcome: expectedOutcome,

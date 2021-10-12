@@ -1,11 +1,11 @@
 package models
 
 type Requirements struct {
-	Id              int    `json:"id"`
+	Id              int    `json:"id,omitempty"`
 	Request         string `json:"request"`
 	ExpectedOutcome string `json:"outcome"`
-	Status          bool   `json:"status"`
-	OrderID         string `json:"order_id"`
+	Status          bool   `json:"status,omitempty"`
+	OrderID         string `json:"order_id,omitempty"`
 }
 
 type ProgressForm struct {

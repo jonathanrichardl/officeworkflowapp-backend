@@ -20,7 +20,7 @@ func NewRequirementsMySQL(db *sql.DB) *RequirementsMySQL {
 //Create a book
 func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO requirements (request, outcome, order_id, status) 
+		INSERT INTO requirements (request, expectedoutcome, order_id, status) 
 		values(?,?,?,'0')`)
 	if err != nil {
 		return -1, err
@@ -49,7 +49,7 @@ func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 }
 
 func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
-	stmt, err := r.db.Prepare(`SELECT id, request,outcome, status FROM requirements where id = ?`)
+	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements where id = ?`)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
 
 //Update a book
 func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
-	_, err := r.db.Exec("UPDATE requirements SET request = ?, order_id = ?, outcome = ?, status = ? where id = ?",
+	_, err := r.db.Exec("UPDATE requirements SET request = ?, order_id = ?, expectedoutcome = ?, status = ? where id = ?",
 		e.Request, e.OrderID, e.ExpectedOutcome, e.Status, e.Id)
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
 
 //Search books
 func (r *RequirementsMySQL) Search(query string) ([]*entity.Requirements, error) {
-	stmt, err := r.db.Prepare(`SELECT id, request,outcome, status FROM requirements WHERE request like ?`)
+	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements WHERE request like '?'`)
 	if err != nil {
 		return nil, err
 	}

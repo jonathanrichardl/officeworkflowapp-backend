@@ -18,12 +18,12 @@ func NewService(r Repository) *Service {
 	}
 }
 
-func (s *Service) NewOrder(title string, description string, deadline time.Time) (entity.ID, error) {
+func (s *Service) NewOrder(title string, description string, deadline time.Time) (string, error) {
 	o := entity.NewOrder(title, description, deadline)
 	return s.repo.Create(o)
 }
 
-func (s *Service) GetOrder(id entity.ID) (*entity.Orders, error) {
+func (s *Service) GetOrder(id string) (*entity.Orders, error) {
 	o, err := s.repo.Get(id)
 	if o == nil {
 		return nil, errors.New("not found")
@@ -60,7 +60,7 @@ func (s *Service) ListOrders() ([]*entity.Orders, error) {
 }
 
 //DeleteBook Delete a book
-func (s *Service) DeleteOrder(id entity.ID) error {
+func (s *Service) DeleteOrder(id string) error {
 	_, err := s.GetOrder(id)
 	if err != nil {
 		return err

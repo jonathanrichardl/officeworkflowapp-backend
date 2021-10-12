@@ -14,7 +14,7 @@ func BuildPayload(O []*entity.Orders) []*Orders {
 	var response []*Orders
 	for _, o := range O {
 		r := Orders{
-			ID:          o.ID.String(),
+			ID:          o.ID,
 			Description: o.Description,
 			Title:       o.Title,
 			Deadline:    o.Deadline.Format("2 Jan 2006"),
@@ -32,7 +32,7 @@ func (o *Orders) AddRequirements(R []*entity.Requirements) {
 	for _, r := range R {
 		requirement := Requirements{
 			Id:              r.Id,
-			OrderID:         r.OrderID.String(),
+			OrderID:         r.OrderID,
 			ExpectedOutcome: r.ExpectedOutcome,
 			Request:         r.Request,
 			Status:          r.Status,
