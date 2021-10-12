@@ -17,13 +17,12 @@ func NewOrdersMySQL(db *sql.DB) *OrdersMySQL {
 	}
 }
 
-//Create a book
-func (r *OrdersMySQL) Create(e *entity.Orders) error {
+func (r *OrdersMySQL) Create(e *entity.Orders) (entity.ID, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO orders (id, title, description, deadline) 
 		values(?,?,?,?)`)
 	if err != nil {
-		return err
+		return e.ID, err
 	}
 	_, err = stmt.Exec(
 		e.ID,
@@ -32,13 +31,13 @@ func (r *OrdersMySQL) Create(e *entity.Orders) error {
 		e.Deadline,
 	)
 	if err != nil {
-		return err
+		return e.ID, err
 	}
 	err = stmt.Close()
 	if err != nil {
-		return err
+		return e.ID, err
 	}
-	return nil
+	return e.ID, nil
 }
 
 //Get a book

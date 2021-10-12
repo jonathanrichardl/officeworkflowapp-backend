@@ -43,6 +43,11 @@ func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	order, err := c.order.GetOrder(uuid)
+
+	if err != nil {
+		return
+	}
+
 	response := models.BuildPayload([]*entity.Orders{order})
 	requirements, err := c.requirements.GetRequirementsbyOrderId(order.ID.String())
 	response[0].AddRequirements(requirements)
@@ -89,8 +94,8 @@ func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) PostUpdateOnDelivery(w http.ResponseWriter, r *http.Request) {
-	// request := mux.Vars(r)
-	// id := request["id"]
+	request := mux.Vars(r)
+	_ = request["id"]
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -118,6 +123,41 @@ func (c *Controller) PostUpdateOnDelivery(w http.ResponseWriter, r *http.Request
 		}
 		r.SetStatus(false)
 		c.requirements.UpdateRequirement(r)
+	}
+
+}
+
+func (c *Controller) DeleteOrder(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	request := mux.Vars(r)
+	uuid, err := uuid.FromBytes([]byte(request["id"]))
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+		return
+	}
+	requirements, err := c.requirements.GetRequirementsbyOrderId(uuid.String())
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	if len(requirements) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	for _, requirement := range requirements {
+		err = c.requirements.DeleteRequirement(requirement.Id)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+	}
+	err = c.order.DeleteOrder(uuid)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
 	}
 
 }

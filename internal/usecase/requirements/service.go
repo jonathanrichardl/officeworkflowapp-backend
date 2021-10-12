@@ -55,7 +55,6 @@ func (s *Service) ListRequirements() ([]*entity.Requirements, error) {
 	return s.repo.List()
 }
 
-//DeleteUser Delete an user
 func (s *Service) DeleteRequirement(id int) error {
 	u, err := s.GetRequirementbyID(id)
 	if u == nil {
