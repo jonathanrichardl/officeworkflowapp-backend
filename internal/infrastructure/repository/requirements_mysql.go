@@ -48,23 +48,21 @@ func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 	return id, nil
 }
 
-func (r *RequirementsMySQL) Get(orderID entity.ID) (*[]entity.Requirements, error) {
-	stmt, err := r.db.Prepare(`SELECT id, request,outcome, status FROM requirements where order_id = ?`)
+func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
+	stmt, err := r.db.Prepare(`SELECT id, request,outcome, status FROM requirements where id = ?`)
 	if err != nil {
 		return nil, err
 	}
-	var requirements []entity.Requirements
-	rows, err := stmt.Query(orderID)
+	var requirements entity.Requirements
+	rows, err := stmt.Query(ID)
 	if err != nil {
 		return nil, err
 	}
 	for rows.Next() {
-		var q entity.Requirements
-		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.Status)
+		err = rows.Scan(&requirements.Id, &requirements.Request, &requirements.ExpectedOutcome, &requirements.Status)
 		if err != nil {
 			return nil, err
 		}
-		requirements = append(requirements, q)
 	}
 	return &requirements, nil
 }
