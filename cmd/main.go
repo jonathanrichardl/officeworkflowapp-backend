@@ -15,7 +15,7 @@ import (
 
 func main() {
 	logger := logger.NewLogger()
-	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL")+"/?parseTime=true")
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL")+"?parseTime=true")
 	// db, err := sql.Open("postgre", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
 	// db, err := sql.Open("mysql", "root:123jonathan12310w0300!!!@tcp(localhost:3306)/testers?parseTime=true")
 	if err != nil {
