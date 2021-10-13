@@ -5,6 +5,7 @@ import (
 	"clean/internal/usecase/requirements"
 	"clean/pkg/logger"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -30,5 +31,5 @@ func (c *Controller) RegisterHandler() {
 }
 
 func (c *Controller) Start() {
-	http.ListenAndServe(":8080", c.router)
+	http.ListenAndServe(":"+os.Getenv("PORT"), c.router)
 }
