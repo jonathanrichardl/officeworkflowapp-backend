@@ -7,13 +7,17 @@ import (
 	"clean/internal/usecase/requirements"
 	"clean/pkg/logger"
 	"database/sql"
+	"os"
 
-	_ "github.com/go-sql-driver/mysql"
+	// _ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 func main() {
 	logger := logger.NewLogger()
-	db, err := sql.Open("mysql", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL")+"/?parseTime=true")
+	// db, err := sql.Open("postgre", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
+	// db, err := sql.Open("mysql", "root:123jonathan12310w0300!!!@tcp(localhost:3306)/testers?parseTime=true")
 	if err != nil {
 		panic(err)
 	}
