@@ -62,6 +62,7 @@ func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	fmt.Fprint(w, "orders")
 	var order models.Orders
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {

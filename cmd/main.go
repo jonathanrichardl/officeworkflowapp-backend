@@ -17,9 +17,6 @@ func main() {
 	logger := logger.NewLogger()
 	// db, err := sql.Open("postgres", os.Getenv("DATABASE_URL")+"?parseTime=true")
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-	// db, err := sql.Open("postgres", "postgres://kavbhqehyxpbax:d3124c4d3b51b291dbd56d33c72a1af221ed3811ee7b7b28a552d95e380e45bf@ec2-52-87-123-108.compute-1.amazonaws.com:5432/d927rrbj01a6vd?parseTime=true")
-
-	// db, err := sql.Open("postgre", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
 	// db, err := sql.Open("mysql", "root:123jonathan12310w0300!!!@tcp(localhost:3306)/testers?parseTime=true")
 	if err != nil {
 		panic(err)
