@@ -37,7 +37,8 @@ func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	rows, _ := r.db.Query("SELECT last_insert_id();")
+	// rows, _ := r.db.Query("SELECT last_insert_id();")
+	rows, _ := r.db.Query("SELECT CURRVAL(pg_get_serial_sequence('requirements','id'));")
 	var id int
 	for rows.Next() {
 		err = rows.Scan(&id)
