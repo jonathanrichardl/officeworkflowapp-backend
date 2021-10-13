@@ -3,3 +3,4 @@ CREATE TABLE orders(id varchar(37) PRIMARY KEY, title varchar(50),description va
 -- CREATE TABLE requirements(requirementid integer PRIMARY KEY AUTO_INCREMENT,request varchar(50),expectedoutcome varchar(50),order_id integer,status bool,FOREIGN KEY(order_id) REFERENCES orders(id));
 CREATE TABLE requirements(requirementid SERIAL PRIMARY KEY,request varchar(50),expectedoutcome varchar(50),order_id varchar(37),status bool,FOREIGN KEY(order_id) REFERENCES orders(id));
 INSERT INTO orders (id, title, description, deadline) values('asdasd','asd','asdasfasdasd','2 jan 2022');
+INSERT INTO requirements (request, expectedoutcome, order_id, status) values('asdasd','asdasd','asdasd','0');

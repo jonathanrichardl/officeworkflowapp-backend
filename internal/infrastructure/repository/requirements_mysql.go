@@ -21,7 +21,7 @@ func NewRequirementsMySQL(db *sql.DB) *RequirementsMySQL {
 func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO requirements (request, expectedoutcome, order_id, status) 
-		values(?,?,?,'0')`)
+		values($1,$2,$3,'0')`)
 	if err != nil {
 		return -1, err
 	}
@@ -49,7 +49,7 @@ func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 }
 
 func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
-	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements where id = ?`)
+	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements where id = $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
 
 //Update a book
 func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
-	_, err := r.db.Exec("UPDATE requirements SET request = ?, order_id = ?, expectedoutcome = ?, status = ? where id = ?",
+	_, err := r.db.Exec("UPDATE requirements SET request = $1, order_id = $2, expectedoutcome = $3, status = $4 where id = $5",
 		e.Request, e.OrderID, e.ExpectedOutcome, e.Status, e.Id)
 	if err != nil {
 		return err
@@ -79,7 +79,7 @@ func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
 
 //Search books
 func (r *RequirementsMySQL) Search(query string) ([]*entity.Requirements, error) {
-	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements WHERE request like '?'`)
+	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements WHERE request like '$1'`)
 	if err != nil {
 		return nil, err
 	}
@@ -124,7 +124,7 @@ func (r *RequirementsMySQL) List() ([]*entity.Requirements, error) {
 
 //Delete a book
 func (r *RequirementsMySQL) Delete(id int) error {
-	_, err := r.db.Exec("DELETE FROM requirements where id = ?", id)
+	_, err := r.db.Exec("DELETE FROM requirements where id = $1", id)
 	if err != nil {
 		return err
 	}
