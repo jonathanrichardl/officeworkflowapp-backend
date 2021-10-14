@@ -28,6 +28,7 @@ func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request
 			c.logger.ErrorLogger.Println("Error retrieving requirements from database: ", err.Error())
 			return
 		}
+		fmt.Println(requirements)
 		order.AddRequirements(requirements)
 	}
 	json.NewEncoder(w).Encode(response)
