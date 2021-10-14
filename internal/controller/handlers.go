@@ -22,7 +22,7 @@ func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request
 		return
 	}
 	response := models.BuildPayload(orders)
-	fmt.Println(orders)
+
 	for _, order := range response {
 		requirements, err := c.requirements.GetRequirementsbyOrderId(order.ID)
 		if err != nil {
@@ -31,11 +31,9 @@ func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request
 		}
 
 		order.AddRequirements(requirements)
-		fmt.Println(order)
-	}
-	fmt.Println(response)
-	json.NewEncoder(w).Encode(response)
 
+	}
+	json.NewEncoder(w).Encode(response)
 }
 
 func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
