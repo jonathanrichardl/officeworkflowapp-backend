@@ -43,14 +43,14 @@ func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
 	order, err := c.order.GetOrder(uuid)
 
 	if err != nil {
-		c.logger.ErrorLogger.Printf("Error retrieving order %s from database : %s\n", uuid, err.Error())
+		c.logger.ErrorLogger.Printf("Error retrieving order %s from database table orders : %s\n", uuid, err.Error())
 		return
 	}
 
 	response := models.BuildPayload([]*entity.Orders{order})
 	requirements, err := c.requirements.GetRequirementsbyOrderId(uuid)
 	if err != nil {
-		c.logger.ErrorLogger.Printf("Error retrieving requirements for order %s from database: %s\n", uuid, err.Error())
+		c.logger.ErrorLogger.Printf("Error retrieving requirements for order %s from database table requirements: %s\n", uuid, err.Error())
 		return
 	}
 	response[0].AddRequirements(requirements)
