@@ -34,6 +34,7 @@ func (s *Service) GetRequirementsbyOrderId(OrderID string) ([]*entity.Requiremen
 		}
 		fmt.Println(r)
 		requirements = append(requirements, &r)
+		fmt.Println(requirements)
 	}
 	return requirements, nil
 
