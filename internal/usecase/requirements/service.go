@@ -20,7 +20,7 @@ func NewService(r Repository) *Service {
 
 func (s *Service) GetRequirementsbyOrderId(OrderID string) ([]*entity.Requirements, error) {
 	rows, err := s.repo.CustomQuery(fmt.Sprintf(
-		"SELECT id, request,expectedoutcome, status FROM requirements WHERE order_id = %s ",
+		"SELECT id, request,expectedoutcome, status FROM requirements WHERE order_id = '%s' ",
 		OrderID))
 	if err != nil {
 		return nil, err
