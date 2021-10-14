@@ -42,7 +42,7 @@ func (r *OrdersMySQL) Create(e *entity.Orders) (string, error) {
 
 //Get a book
 func (r *OrdersMySQL) Get(id string) (*entity.Orders, error) {
-	stmt, err := r.db.Prepare(`SELECT * FROM orders where id = '$1'`)
+	stmt, err := r.db.Prepare(`SELECT * FROM orders where id = $1`)
 	if err != nil {
 		return nil, err
 	}
