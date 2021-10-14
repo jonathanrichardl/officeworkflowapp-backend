@@ -65,8 +65,8 @@ func (r *OrdersMySQL) Update(e *entity.Orders) error {
 
 //Search books
 func (r *OrdersMySQL) Search(query string) ([]*entity.Orders, error) {
-	stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like '$1'`)
-	// stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like $1`)
+	// stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like '$1'`)
+	stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like $1`)
 	if err != nil {
 		return nil, err
 	}
