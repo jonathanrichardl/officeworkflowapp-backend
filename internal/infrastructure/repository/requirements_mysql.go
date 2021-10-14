@@ -10,14 +10,12 @@ type RequirementsMySQL struct {
 	db *sql.DB
 }
 
-//NewBookMySQL create new repository
 func NewRequirementsMySQL(db *sql.DB) *RequirementsMySQL {
 	return &RequirementsMySQL{
 		db: db,
 	}
 }
 
-//Create a book
 func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO requirements (request, expectedoutcome, order_id, status) 
@@ -37,7 +35,6 @@ func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 	if err != nil {
 		return -1, err
 	}
-	// rows, _ := r.db.Query("SELECT last_insert_id();")
 	rows, _ := r.db.Query("SELECT CURRVAL(pg_get_serial_sequence('requirements','id'));")
 	var id int
 	for rows.Next() {
@@ -55,23 +52,18 @@ func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
 		return nil, err
 	}
 	var requirements entity.Requirements
-	rows, err := stmt.Query(ID)
+	row := stmt.QueryRow(ID)
+	err = row.Scan(&requirements.Id, &requirements.Request, &requirements.ExpectedOutcome, &requirements.Status)
 	if err != nil {
 		return nil, err
-	}
-	for rows.Next() {
-		err = rows.Scan(&requirements.Id, &requirements.Request, &requirements.ExpectedOutcome, &requirements.Status)
-		if err != nil {
-			return nil, err
-		}
 	}
 	return &requirements, nil
 }
 
 //Update a book
 func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
-	_, err := r.db.Exec("UPDATE requirements SET request = $1, order_id = $2, expectedoutcome = $3, status = $4 where id = $5",
-		e.Request, e.OrderID, e.ExpectedOutcome, e.Status, e.Id)
+	_, err := r.db.Exec("UPDATE requirements SET request = $1,  expectedoutcome = $2, status = $3 where id = $4",
+		e.Request, e.ExpectedOutcome, e.Status, e.Id)
 	if err != nil {
 		return err
 	}
@@ -80,7 +72,7 @@ func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
 
 //Search books
 func (r *RequirementsMySQL) Search(query string) ([]*entity.Requirements, error) {
-	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements WHERE request like '$1'`)
+	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements WHERE request like $1`)
 	if err != nil {
 		return nil, err
 	}
