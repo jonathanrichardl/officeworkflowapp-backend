@@ -30,8 +30,8 @@ func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request
 		}
 
 		order.AddRequirements(requirements)
-		fmt.Println(order)
 	}
+	fmt.Println(response)
 	json.NewEncoder(w).Encode(response)
 
 }
