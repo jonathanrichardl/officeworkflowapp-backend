@@ -10,7 +10,6 @@ type OrdersMySQL struct {
 	db *sql.DB
 }
 
-//NewBookMySQL create new repository
 func NewOrdersMySQL(db *sql.DB) *OrdersMySQL {
 	return &OrdersMySQL{
 		db: db,
@@ -40,22 +39,16 @@ func (r *OrdersMySQL) Create(e *entity.Orders) (string, error) {
 	return e.ID, nil
 }
 
-//Get a book
 func (r *OrdersMySQL) Get(id string) (*entity.Orders, error) {
 	stmt, err := r.db.Prepare(`SELECT * FROM orders where id = $1`)
 	if err != nil {
 		return nil, err
 	}
 	var b entity.Orders
-	rows, err := stmt.Query(id)
+	row := stmt.QueryRow(id)
+	err = row.Scan(&b.ID, &b.Title, &b.Description, &b.Deadline)
 	if err != nil {
 		return nil, err
-	}
-	for rows.Next() {
-		err = rows.Scan(&b.ID, &b.Title, &b.Description, &b.Deadline)
-		if err != nil {
-			return nil, err
-		}
 	}
 	return &b, nil
 }
@@ -72,9 +65,8 @@ func (r *OrdersMySQL) Update(e *entity.Orders) error {
 
 //Search books
 func (r *OrdersMySQL) Search(query string) ([]*entity.Orders, error) {
-	stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like '$1'`)
-	// Kalo fitur ini error, mungkin harus ilangin petiknya si $1
-	// stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like $1`)
+	// stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like '$1'`)
+	stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like $1`)
 	if err != nil {
 		return nil, err
 	}

@@ -30,6 +30,9 @@ func (c *Controller) RegisterHandler() {
 	c.router.HandleFunc("/orders", c.AddNewOrder).Methods("POST")
 	c.router.HandleFunc("/orders/id={id}", c.GetStatusOfOrder).Methods("GET")
 	c.router.HandleFunc("/orders/id={id}", c.PostUpdateOnDelivery).Methods("POST")
+	c.router.HandleFunc("/orders/id={id}", c.DeleteOrder).Methods("DELETE")
+	c.router.HandleFunc("/orders/id={id}", c.ModifyRequirements).Methods("PATCH")
+	c.router.HandleFunc("/orders/search:{query}", c.SearchOrders).Methods("GET")
 }
 
 func (c *Controller) Index(w http.ResponseWriter, r *http.Request) {

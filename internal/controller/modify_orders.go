@@ -2,7 +2,6 @@ package controller
 
 import (
 	"clean/internal/controller/models"
-	"clean/internal/entity"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -11,55 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 )
-
-func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	orders, err := c.order.ListOrders()
-	if err != nil {
-		c.logger.ErrorLogger.Println("Error retrieving orders from database: ", err.Error())
-		return
-	}
-	response := models.BuildPayload(orders)
-
-	for _, order := range response {
-		requirements, err := c.requirements.GetRequirementsbyOrderId(order.ID)
-		if err != nil {
-			c.logger.ErrorLogger.Println("Error retrieving requirements from database: ", err.Error())
-			return
-		}
-
-		order.AddRequirements(requirements)
-
-	}
-	json.NewEncoder(w).Encode(response)
-}
-
-func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	request := mux.Vars(r)
-	uuid := request["id"]
-	order, err := c.order.GetOrder(uuid)
-
-	if err != nil {
-		c.logger.ErrorLogger.Printf("Error retrieving order %s from database table orders : %s\n", uuid, err.Error())
-		return
-	}
-
-	response := models.BuildPayload([]*entity.Orders{order})
-	requirements, err := c.requirements.GetRequirementsbyOrderId(uuid)
-	if err != nil {
-		c.logger.ErrorLogger.Printf("Error retrieving requirements for order %s from database table requirements: %s\n", uuid, err.Error())
-		return
-	}
-	response[0].AddRequirements(requirements)
-
-	json.NewEncoder(w).Encode(response)
-
-}
 
 func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -164,6 +114,41 @@ func (c *Controller) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
+	}
+
+}
+
+func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) {
+	request := mux.Vars(r)
+	_ = request["id"]
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	var patches models.RequirementPatch
+	req, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+	}
+	err = json.Unmarshal(req, &patches)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+	}
+	for _, patch := range patches.Patches {
+		r, err := c.requirements.GetRequirementbyID(patch.Id)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Invalid Request"))
+			c.logger.ErrorLogger.Println("Error retrieving requirement : ", err.Error())
+		}
+		r.ExpectedOutcome = patch.ExpectedOutcome
+		err = c.requirements.UpdateRequirement(r)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			c.logger.ErrorLogger.Println("Error updating requirement : ", err.Error())
+
+		}
 	}
 
 }
