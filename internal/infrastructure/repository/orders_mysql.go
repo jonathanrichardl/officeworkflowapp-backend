@@ -62,7 +62,7 @@ func (r *OrdersMySQL) Get(id string) (*entity.Orders, error) {
 
 //Update a book
 func (r *OrdersMySQL) Update(e *entity.Orders) error {
-	_, err := r.db.Exec("UPDATE orders SET title = $1, description = $2, deadline = $3 where id = '$4'",
+	_, err := r.db.Exec("UPDATE orders SET title = $1, description = $2, deadline = $3 where id = $4",
 		e.Title, e.Description, e.Deadline, e.ID)
 	if err != nil {
 		return err
@@ -73,6 +73,8 @@ func (r *OrdersMySQL) Update(e *entity.Orders) error {
 //Search books
 func (r *OrdersMySQL) Search(query string) ([]*entity.Orders, error) {
 	stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like '$1'`)
+	// Kalo fitur ini error, mungkin harus ilangin petiknya si $1
+	// stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +119,7 @@ func (r *OrdersMySQL) List() ([]*entity.Orders, error) {
 
 //Delete a book
 func (r *OrdersMySQL) Delete(id string) error {
-	_, err := r.db.Exec("DELETE FROM orders where id = '$1'", id)
+	_, err := r.db.Exec("DELETE FROM orders where id = $1", id)
 	if err != nil {
 		return err
 	}
