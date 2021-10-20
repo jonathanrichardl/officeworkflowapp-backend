@@ -7,3 +7,5 @@ CREATE TABLE users(id varchar(37) PRIMARY KEY, username varchar(50),email varcha
 
 INSERT INTO orders (id, title, description, deadline) values('asdasd','asd','asdasfasdasd','2 jan 2022');
 INSERT INTO requirements (request, expectedoutcome, order_id, status) values('asdasd','asdasd','asdasd','0');
+
+INSERT INTO users (id, username, email, pswd) values('123','elloy',md5('elloy@gmail.com'),md5('100300'));

@@ -38,7 +38,7 @@ func (c *Controller) RegisterHandler() {
 	c.router.HandleFunc("/orders/id={id}", c.DeleteOrder).Methods("DELETE")
 	c.router.HandleFunc("/orders/id={id}", c.ModifyRequirements).Methods("PATCH")
 	c.router.HandleFunc("/orders/search:{query}", c.SearchOrders).Methods("GET")
-	c.router.Use(c.loggingMiddleware)
+	// c.router.Use(c.loggingMiddleware)
 
 }
 
@@ -50,11 +50,13 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Invalid Request"))
+		c.logger.ErrorLogger.Println("error when reading ", err.Error())
 	}
 	err = json.Unmarshal(req, &form)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Invalid Request"))
+		c.logger.ErrorLogger.Println("Error in unmarshal", err.Error())
 	}
 	ID, ok, err := c.user.Login(form.Username, form.Password)
 	if err != nil {
@@ -73,6 +75,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	} else {
 		w.WriteHeader(http.StatusNotAcceptable)
 		w.Write([]byte("Username or Password is wrong"))
+		c.logger.ErrorLogger.Println("Username or Password is wrong ", err.Error())
 	}
 
 }
