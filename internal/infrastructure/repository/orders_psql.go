@@ -6,17 +6,17 @@ import (
 	"clean/internal/entity"
 )
 
-type OrdersMySQL struct {
+type OrdersPSQL struct {
 	db *sql.DB
 }
 
-func NewOrdersMySQL(db *sql.DB) *OrdersMySQL {
-	return &OrdersMySQL{
+func NewOrdersPSQL(db *sql.DB) *OrdersPSQL {
+	return &OrdersPSQL{
 		db: db,
 	}
 }
 
-func (r *OrdersMySQL) Create(e *entity.Orders) (string, error) {
+func (r *OrdersPSQL) Create(e *entity.Orders) (string, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO orders (id, title, description, deadline) 
 		values($1,$2,$3,$4)`)
@@ -39,7 +39,7 @@ func (r *OrdersMySQL) Create(e *entity.Orders) (string, error) {
 	return e.ID, nil
 }
 
-func (r *OrdersMySQL) Get(id string) (*entity.Orders, error) {
+func (r *OrdersPSQL) Get(id string) (*entity.Orders, error) {
 	stmt, err := r.db.Prepare(`SELECT * FROM orders where id = $1`)
 	if err != nil {
 		return nil, err
@@ -53,8 +53,7 @@ func (r *OrdersMySQL) Get(id string) (*entity.Orders, error) {
 	return &b, nil
 }
 
-//Update a book
-func (r *OrdersMySQL) Update(e *entity.Orders) error {
+func (r *OrdersPSQL) Update(e *entity.Orders) error {
 	_, err := r.db.Exec("UPDATE orders SET title = $1, description = $2, deadline = $3 where id = $4",
 		e.Title, e.Description, e.Deadline, e.ID)
 	if err != nil {
@@ -63,8 +62,7 @@ func (r *OrdersMySQL) Update(e *entity.Orders) error {
 	return nil
 }
 
-//Search books
-func (r *OrdersMySQL) Search(query string) ([]*entity.Orders, error) {
+func (r *OrdersPSQL) Search(query string) ([]*entity.Orders, error) {
 	stmt, err := r.db.Prepare(`SELECT * FROM orders WHERE title like $1`)
 	if err != nil {
 		return nil, err
@@ -87,7 +85,7 @@ func (r *OrdersMySQL) Search(query string) ([]*entity.Orders, error) {
 }
 
 //List books
-func (r *OrdersMySQL) List() ([]*entity.Orders, error) {
+func (r *OrdersPSQL) List() ([]*entity.Orders, error) {
 	stmt, err := r.db.Prepare(`SELECT * FROM orders`)
 	if err != nil {
 		return nil, err
@@ -109,7 +107,7 @@ func (r *OrdersMySQL) List() ([]*entity.Orders, error) {
 }
 
 //Delete a book
-func (r *OrdersMySQL) Delete(id string) error {
+func (r *OrdersPSQL) Delete(id string) error {
 	_, err := r.db.Exec("DELETE FROM orders where id = $1", id)
 	if err != nil {
 		return err
@@ -117,7 +115,7 @@ func (r *OrdersMySQL) Delete(id string) error {
 	return nil
 }
 
-func (r *OrdersMySQL) CustomQuery(query string) (*sql.Rows, error) {
+func (r *OrdersPSQL) CustomQuery(query string) (*sql.Rows, error) {
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err

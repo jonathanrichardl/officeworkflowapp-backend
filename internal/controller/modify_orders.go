@@ -12,9 +12,8 @@ import (
 )
 
 func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	fmt.Fprint(w, "orders")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var order models.Orders
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -54,11 +53,12 @@ func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) PostUpdateOnDelivery(w http.ResponseWriter, r *http.Request) {
+
 	request := mux.Vars(r)
 	_ = request["id"]
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var form models.ProgressForm
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -88,8 +88,8 @@ func (c *Controller) PostUpdateOnDelivery(w http.ResponseWriter, r *http.Request
 }
 
 func (c *Controller) DeleteOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	//w.Header().Set("Access-Control-Allow-Origin", "*")
+	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	request := mux.Vars(r)
 	uuid := request["id"]
 
@@ -143,6 +143,7 @@ func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) 
 			c.logger.ErrorLogger.Println("Error retrieving requirement : ", err.Error())
 		}
 		r.ExpectedOutcome = patch.ExpectedOutcome
+		fmt.Println(r.ExpectedOutcome)
 		err = c.requirements.UpdateRequirement(r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

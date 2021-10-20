@@ -32,14 +32,11 @@ func (s *Service) GetRequirementsbyOrderId(OrderID string) ([]*entity.Requiremen
 		if err != nil {
 			return nil, err
 		}
-		// fmt.Println(r)
 		requirements = append(requirements, &r)
-		// fmt.Println(requirements)
 	}
 	return requirements, nil
 
 }
-
 func (s *Service) CreateRequirement(request string, expectedOutcome string, orderID string) (int, error) {
 	e := entity.NewRequirement(request, expectedOutcome, orderID)
 	return s.repo.Create(e)

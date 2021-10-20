@@ -25,11 +25,13 @@ func (s *Service) NewOrder(title string, description string, deadline time.Time)
 
 func (s *Service) GetOrder(id string) (*entity.Orders, error) {
 	o, err := s.repo.Get(id)
-	if o == nil {
-		return nil, errors.New("not found")
-	}
+
 	if err != nil {
 		return nil, err
+	}
+
+	if o == nil {
+		return nil, errors.New("not found")
 	}
 
 	return o, nil

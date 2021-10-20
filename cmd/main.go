@@ -5,11 +5,11 @@ import (
 	"clean/internal/infrastructure/repository"
 	"clean/internal/usecase/orders"
 	"clean/internal/usecase/requirements"
+	"clean/internal/usecase/user"
 	"clean/pkg/logger"
 	"database/sql"
 	"os"
 
-	// _ "github.com/go-sql-driver/mysql"
 	_ "github.com/lib/pq"
 )
 
@@ -21,11 +21,14 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	orderRepo := repository.NewOrdersMySQL(db)
-	requirementRepo := repository.NewRequirementsMySQL(db)
+	orderRepo := repository.NewOrdersPSQL(db)
+	requirementRepo := repository.NewRequirementsPSQL(db)
+	userRepo := repository.NewUserPSQL(db)
 	orderService := orders.NewService(orderRepo)
 	requirementService := requirements.NewService(requirementRepo)
-	c := controller.NewController(orderService, requirementService, logger)
+	userService := user.NewService(userRepo)
+
+	c := controller.NewController(orderService, userService, requirementService, logger)
 	c.RegisterHandler()
 	c.Start()
 

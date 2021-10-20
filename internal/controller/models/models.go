@@ -25,3 +25,8 @@ type Fufillment struct {
 	Requirementid int    `json:"reqid"`
 	Outcome       string `json:"outcome"`
 }
+
+type LoginForm struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}

@@ -6,17 +6,17 @@ import (
 	"clean/internal/entity"
 )
 
-type RequirementsMySQL struct {
+type RequirementsPSQL struct {
 	db *sql.DB
 }
 
-func NewRequirementsMySQL(db *sql.DB) *RequirementsMySQL {
-	return &RequirementsMySQL{
+func NewRequirementsPSQL(db *sql.DB) *RequirementsPSQL {
+	return &RequirementsPSQL{
 		db: db,
 	}
 }
 
-func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
+func (r *RequirementsPSQL) Create(e *entity.Requirements) (int, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO requirements (request, expectedoutcome, order_id, status) 
 		values($1,$2,$3,'0')`)
@@ -46,7 +46,7 @@ func (r *RequirementsMySQL) Create(e *entity.Requirements) (int, error) {
 	return id, nil
 }
 
-func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
+func (r *RequirementsPSQL) Get(ID int) (*entity.Requirements, error) {
 	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements where id = $1`)
 	if err != nil {
 		return nil, err
@@ -60,8 +60,7 @@ func (r *RequirementsMySQL) Get(ID int) (*entity.Requirements, error) {
 	return &requirements, nil
 }
 
-//Update a book
-func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
+func (r *RequirementsPSQL) Update(e *entity.Requirements) error {
 	_, err := r.db.Exec("UPDATE requirements SET request = $1,  expectedoutcome = $2, status = $3 where id = $4",
 		e.Request, e.ExpectedOutcome, e.Status, e.Id)
 	if err != nil {
@@ -70,8 +69,7 @@ func (r *RequirementsMySQL) Update(e *entity.Requirements) error {
 	return nil
 }
 
-//Search books
-func (r *RequirementsMySQL) Search(query string) ([]*entity.Requirements, error) {
+func (r *RequirementsPSQL) Search(query string) ([]*entity.Requirements, error) {
 	stmt, err := r.db.Prepare(`SELECT id, request, expectedoutcome, status FROM requirements WHERE request like $1`)
 	if err != nil {
 		return nil, err
@@ -93,8 +91,7 @@ func (r *RequirementsMySQL) Search(query string) ([]*entity.Requirements, error)
 	return requirements, nil
 }
 
-//List books
-func (r *RequirementsMySQL) List() ([]*entity.Requirements, error) {
+func (r *RequirementsPSQL) List() ([]*entity.Requirements, error) {
 	stmt, err := r.db.Prepare(`SELECT * FROM requirements`)
 	if err != nil {
 		return nil, err
@@ -115,8 +112,7 @@ func (r *RequirementsMySQL) List() ([]*entity.Requirements, error) {
 	return requirements, nil
 }
 
-//Delete a book
-func (r *RequirementsMySQL) Delete(id int) error {
+func (r *RequirementsPSQL) Delete(id int) error {
 	_, err := r.db.Exec("DELETE FROM requirements where id = $1", id)
 	if err != nil {
 		return err
@@ -124,7 +120,7 @@ func (r *RequirementsMySQL) Delete(id int) error {
 	return nil
 }
 
-func (r *RequirementsMySQL) CustomQuery(query string) (*sql.Rows, error) {
+func (r *RequirementsPSQL) CustomQuery(query string) (*sql.Rows, error) {
 	rows, err := r.db.Query(query)
 	if err != nil {
 		return nil, err
