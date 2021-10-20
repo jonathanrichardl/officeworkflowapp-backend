@@ -20,7 +20,7 @@ func NewUserPSQL(db *sql.DB) *UserPSQL {
 func (r *UserPSQL) Create(u *entity.User) (string, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO users (id, username, email, password) 
-		values(?, ?, md5(?), md5(?))`)
+		values($1, $2, md5($3), md5($4))`)
 	if err != nil {
 		return u.ID, err
 	}
@@ -40,7 +40,7 @@ func (r *UserPSQL) Create(u *entity.User) (string, error) {
 }
 
 func (r *UserPSQL) GetbyUsername(username string) (*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT id, username, email, pswd from users where username = ?`)
+	stmt, err := r.db.Prepare(`SELECT id, username, email, pswd from users where username = $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (r *UserPSQL) GetbyUsername(username string) (*entity.User, error) {
 }
 
 func (r *UserPSQL) GetbyID(ID string) (*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT id, username, email from users where ID = ?`)
+	stmt, err := r.db.Prepare(`SELECT id, username, email from users where ID = $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -68,7 +68,7 @@ func (r *UserPSQL) GetbyID(ID string) (*entity.User, error) {
 }
 
 func (r *UserPSQL) Update(u *entity.User) error {
-	_, err := r.db.Exec("UPDATE users SET pswd = md5(?),  username = ?, email = md5(?) where username = ?",
+	_, err := r.db.Exec("UPDATE users SET pswd = md5($1),  username = $2, email = md5($3) where username = $4",
 		u.Password, u.Username, u.Email, u.Username)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func (r *UserPSQL) Update(u *entity.User) error {
 }
 
 func (r *UserPSQL) Search(query string) ([]*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT id, username, email FROM users WHERE username like ?`)
+	stmt, err := r.db.Prepare(`SELECT id, username, email FROM users WHERE username like $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func (r *UserPSQL) List() ([]*entity.User, error) {
 }
 
 func (r *UserPSQL) Delete(username string) error {
-	_, err := r.db.Exec("DELETE FROM users where username = ?", username)
+	_, err := r.db.Exec("DELETE FROM users where username = $1", username)
 	if err != nil {
 		return err
 	}

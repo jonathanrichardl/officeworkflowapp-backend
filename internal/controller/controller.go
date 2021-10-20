@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -77,5 +78,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) Start() {
-	http.ListenAndServe(":8080", c.router)
+	port := os.Getenv("PORT")
+	http.ListenAndServe(":"+port, c.router)
+	// http.ListenAndServe(":8080", c.router)
 }
