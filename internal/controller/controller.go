@@ -42,6 +42,8 @@ func (c *Controller) RegisterHandler() {
 }
 
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var form models.LoginForm
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {

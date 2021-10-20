@@ -12,8 +12,8 @@ import (
 
 func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//w.Header().Set("Access-Control-Allow-Origin", "*")
-	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	orders, err := c.order.ListOrders()
 	if err != nil {
 		c.logger.ErrorLogger.Println("Error retrieving orders from database: ", err.Error())
@@ -34,8 +34,8 @@ func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request
 
 func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	//w.Header().Set("Access-Control-Allow-Origin", "*")
-	//w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	request := mux.Vars(r)
 	uuid := request["id"]
 	order, err := c.order.GetOrder(uuid)
