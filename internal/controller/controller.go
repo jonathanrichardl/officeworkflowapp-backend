@@ -9,6 +9,7 @@ import (
 	"order-validation-v2/internal/usecase/requirements"
 	"order-validation-v2/internal/usecase/user"
 	"order-validation-v2/pkg/logger"
+	"os"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
@@ -80,7 +81,8 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) Start() {
-	http.ListenAndServe(":8080", c.router)
+	port := os.Getenv("PORT")
+	http.ListenAndServe(":"+port, c.router)
 }
 
 func (c *Controller) generateJWT(userid string) (string, error) {
