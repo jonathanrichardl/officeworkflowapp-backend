@@ -1,6 +1,6 @@
 package models
 
-import "clean/internal/entity"
+import "order-validation-v2/internal/entity"
 
 type Orders struct {
 	ID           string         `json:"id,omitempty"`

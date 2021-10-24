@@ -1,10 +1,10 @@
 package user
 
 import (
-	"clean/internal/entity"
 	"crypto/md5"
 	"encoding/hex"
 	"errors"
+	"order-validation-v2/internal/entity"
 	"strings"
 )
 

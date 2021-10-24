@@ -1,13 +1,13 @@
 package main
 
 import (
-	"clean/internal/controller"
-	"clean/internal/infrastructure/repository"
-	"clean/internal/usecase/orders"
-	"clean/internal/usecase/requirements"
-	"clean/internal/usecase/user"
-	"clean/pkg/logger"
 	"database/sql"
+	"order-validation-v2/internal/controller"
+	"order-validation-v2/internal/infrastructure/repository"
+	"order-validation-v2/internal/usecase/orders"
+	"order-validation-v2/internal/usecase/requirements"
+	"order-validation-v2/internal/usecase/user"
+	"order-validation-v2/pkg/logger"
 	"os"
 
 	_ "github.com/lib/pq"
