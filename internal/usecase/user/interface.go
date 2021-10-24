@@ -1,8 +1,8 @@
 package user
 
 import (
-	"clean/internal/entity"
 	"database/sql"
+	"order-validation-v2/internal/entity"
 )
 
 //Reader interface

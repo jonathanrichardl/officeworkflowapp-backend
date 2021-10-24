@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"clean/internal/controller/models"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"order-validation-v2/internal/controller/models"
 	"time"
 
 	"github.com/gorilla/mux"

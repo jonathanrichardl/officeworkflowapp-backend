@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 
-	"clean/internal/entity"
+	"order-validation-v2/internal/entity"
 )
 
 type UserPSQL struct {

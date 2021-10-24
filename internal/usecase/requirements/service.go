@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"clean/internal/entity"
+	"order-validation-v2/internal/entity"
 )
 
 type Service struct {

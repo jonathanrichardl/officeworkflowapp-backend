@@ -1,14 +1,14 @@
 package controller
 
 import (
-	"clean/internal/controller/models"
-	"clean/internal/usecase/orders"
-	"clean/internal/usecase/requirements"
-	"clean/internal/usecase/user"
-	"clean/pkg/logger"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"order-validation-v2/internal/controller/models"
+	"order-validation-v2/internal/usecase/orders"
+	"order-validation-v2/internal/usecase/requirements"
+	"order-validation-v2/internal/usecase/user"
+	"order-validation-v2/pkg/logger"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
