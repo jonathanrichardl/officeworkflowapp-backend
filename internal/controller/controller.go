@@ -9,9 +9,9 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"time"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 )
 
@@ -30,33 +30,31 @@ func NewController(o orders.UseCase, u user.UseCase, r requirements.UseCase, l *
 }
 
 func (c *Controller) RegisterHandler() {
-	c.router.HandleFunc("/login", c.Login).Methods("POST")
-	c.router.HandleFunc("/orders", c.GetStatusOfAllOrders).Methods("GET")
-	c.router.HandleFunc("/orders", c.AddNewOrder).Methods("POST")
-	c.router.HandleFunc("/orders/id={id}", c.GetStatusOfOrder).Methods("GET")
-	c.router.HandleFunc("/orders/id={id}", c.PostUpdateOnDelivery).Methods("POST")
-	c.router.HandleFunc("/orders/id={id}", c.DeleteOrder).Methods("DELETE")
-	c.router.HandleFunc("/orders/id={id}", c.ModifyRequirements).Methods("PATCH")
-	c.router.HandleFunc("/orders/search:{query}", c.SearchOrders).Methods("GET")
-	// c.router.Use(c.loggingMiddleware)
+	login := c.router.PathPrefix("/login").Subrouter()
+	login.HandleFunc("/", c.Login).Methods("POST")
+	orders := c.router.PathPrefix("/orders").Subrouter()
+	orders.HandleFunc("/", c.GetStatusOfAllOrders).Methods("GET")
+	orders.HandleFunc("/", c.AddNewOrder).Methods("POST")
+	orders.HandleFunc("/id={id}", c.GetStatusOfOrder).Methods("GET")
+	orders.HandleFunc("/id={id}", c.PostUpdateOnDelivery).Methods("POST")
+	orders.HandleFunc("/id={id}", c.DeleteOrder).Methods("DELETE")
+	orders.HandleFunc("/id={id}", c.ModifyRequirements).Methods("PATCH")
+	orders.HandleFunc("/search:{query}", c.SearchOrders).Methods("GET")
+	orders.Use(c.validateJWT)
 
 }
 
 func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var form models.LoginForm
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Invalid Request"))
-		c.logger.ErrorLogger.Println("error when reading ", err.Error())
 	}
 	err = json.Unmarshal(req, &form)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Invalid Request"))
-		c.logger.ErrorLogger.Println("Error in unmarshal", err.Error())
 	}
 	ID, ok, err := c.user.Login(form.Username, form.Password)
 	if err != nil {
@@ -64,24 +62,38 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Error while logging in ", err.Error())
 	}
 	if ok {
-		cookie := &http.Cookie{}
-		cookie.Name = "Authentication"
-		cookie.Value = ID
-		cookie.Expires = time.Now().Add(1 * time.Hour)
-		http.SetCookie(w, cookie)
+		var response models.Token
+		token, err := c.generateJWT(ID)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			c.logger.ErrorLogger.Println("Error generating jwt ", err.Error())
+		}
+		response.Token = token
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Login Successful"))
+		json.NewEncoder(w).Encode(response)
 
 	} else {
 		w.WriteHeader(http.StatusNotAcceptable)
 		w.Write([]byte("Username or Password is wrong"))
-		c.logger.ErrorLogger.Println("Username or Password is wrong ", err.Error())
 	}
 
 }
 
 func (c *Controller) Start() {
-	port := os.Getenv("PORT")
-	http.ListenAndServe(":"+port, c.router)
-	// http.ListenAndServe(":8080", c.router)
+	http.ListenAndServe(":8080", c.router)
+}
+
+func (c *Controller) generateJWT(userid string) (string, error) {
+	var err error
+	atClaims := jwt.MapClaims{}
+	atClaims["authorized"] = true
+	atClaims["user_id"] = userid
+	atClaims["exp"] = time.Now().Add(time.Minute * 15)
+	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+	token, err := at.SignedString([]byte("SUPERSECRETPASSWORD"))
+	if err != nil {
+		return "", err
+	}
+	return token, nil
+
 }
