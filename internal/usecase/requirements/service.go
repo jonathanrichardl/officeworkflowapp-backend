@@ -2,7 +2,6 @@ package requirements
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
 	"order-validation-v2/internal/entity"
@@ -18,27 +17,16 @@ func NewService(r Repository) *Service {
 	}
 }
 
-func (s *Service) GetRequirementsbyOrderId(OrderID string) ([]*entity.Requirements, error) {
-	rows, err := s.repo.CustomQuery(fmt.Sprintf(
-		"SELECT id, request,expectedoutcome, status FROM requirements WHERE order_id = '%s' ",
-		OrderID))
-	if err != nil {
-		return nil, err
-	}
-	var requirements []*entity.Requirements
-	for rows.Next() {
-		var r entity.Requirements
-		err = rows.Scan(&r.Id, &r.Request, &r.ExpectedOutcome, &r.Status)
-		if err != nil {
-			return nil, err
-		}
-		requirements = append(requirements, &r)
-	}
-	return requirements, nil
+func (s *Service) GetRequirementsbyOrderId(orderID string) ([]*entity.Requirements, error) {
+	return s.repo.GetByOrderID(orderID)
+}
+
+func (s *Service) GetRequirementsbyUserId(userID string) ([]*entity.Requirements, error) {
+	return s.repo.GetByUserID(userID)
 
 }
-func (s *Service) CreateRequirement(request string, expectedOutcome string, orderID string) (int, error) {
-	e := entity.NewRequirement(request, expectedOutcome, orderID)
+func (s *Service) CreateRequirement(request string, expectedOutcome string, orderID string, userID *string) (int, error) {
+	e := entity.NewRequirement(request, expectedOutcome, orderID, userID)
 	return s.repo.Create(e)
 }
 

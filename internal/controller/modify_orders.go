@@ -35,7 +35,7 @@ func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Can't add new order into database : ", err.Error())
 	}
 	for _, requirement := range order.Requirements {
-		_, err := c.requirements.CreateRequirement(requirement.Request, requirement.ExpectedOutcome, id)
+		_, err := c.requirements.CreateRequirement(requirement.Request, requirement.ExpectedOutcome, id, &requirement.UserID)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 			w.Write([]byte("Invalid Request"))
@@ -134,8 +134,13 @@ func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) 
 			w.Write([]byte("Invalid Request"))
 			c.logger.ErrorLogger.Println("Error retrieving requirement : ", err.Error())
 		}
-		r.ExpectedOutcome = patch.ExpectedOutcome
-		fmt.Println(r.ExpectedOutcome)
+
+		if patch.UserID != nil {
+			r.AssignUser(*patch.UserID)
+		}
+		if patch.ExpectedOutcome != nil {
+			r.ExpectedOutcome = *patch.ExpectedOutcome
+		}
 		err = c.requirements.UpdateRequirement(r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

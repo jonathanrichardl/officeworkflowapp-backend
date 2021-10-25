@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 )
 
 func (c *Controller) validateJWT(next http.Handler) http.Handler {
@@ -21,6 +21,7 @@ func (c *Controller) validateJWT(next http.Handler) http.Handler {
 		})
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
+			c.logger.ErrorLogger.Println("Error processing JWT: ", err.Error())
 			return
 		}
 		id := fmt.Sprintf("%v", claims["user_id"])

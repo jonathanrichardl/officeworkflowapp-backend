@@ -1,9 +1,9 @@
 package user
 
 import (
-	"crypto/md5"
-	"encoding/hex"
+	"crypto/sha256"
 	"errors"
+	"fmt"
 	"order-validation-v2/internal/entity"
 	"strings"
 )
@@ -95,8 +95,8 @@ func (s *Service) Login(username string, password string) (string, bool, error) 
 	if u == nil {
 		return username, false, errors.New("Username/Password wrong")
 	}
-	pass := md5.Sum([]byte(password))
-	if u.Password == hex.EncodeToString(pass[:]) {
+	sum := sha256.Sum256([]byte(password))
+	if u.Password == fmt.Sprintf("%x", sum) {
 		return u.ID, true, nil
 
 	}

@@ -10,6 +10,13 @@ type Orders struct {
 	Requirements []Requirements `json:"requirements"`
 }
 
+type Tasks struct {
+	Id              int    `json:"id"`
+	Request         string `json:"task"`
+	ExpectedOutcome string `json:"outcome"`
+	Status          bool   `json:"status"`
+}
+
 func BuildPayload(O []*entity.Orders) []*Orders {
 	var response []*Orders
 	for _, o := range O {
@@ -25,6 +32,21 @@ func BuildPayload(O []*entity.Orders) []*Orders {
 	}
 	return response
 
+}
+
+func BuildTasks(R []*entity.Requirements) []*Tasks {
+	var tasks []*Tasks
+	for _, r := range R {
+		task := Tasks{
+			Id:              r.Id,
+			ExpectedOutcome: r.ExpectedOutcome,
+			Request:         r.Request,
+			Status:          r.Status,
+		}
+		tasks = append(tasks, &task)
+
+	}
+	return tasks
 }
 
 func (o *Orders) AddRequirements(R []*entity.Requirements) {
