@@ -11,7 +11,7 @@ import (
 	"order-validation-v2/pkg/logger"
 	"time"
 
-	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
 )
 
@@ -33,7 +33,7 @@ func (c *Controller) RegisterHandler() {
 	login := c.router.PathPrefix("/login").Subrouter()
 	login.HandleFunc("/", c.Login).Methods("POST")
 	orders := c.router.PathPrefix("/orders").Subrouter()
-	orders.HandleFunc("/", c.GetStatusOfAllOrders).Methods("GET")
+	orders.HandleFunc("/", c.GetTasks).Methods("GET")
 	orders.HandleFunc("/", c.AddNewOrder).Methods("POST")
 	orders.HandleFunc("/id={id}", c.GetStatusOfOrder).Methods("GET")
 	orders.HandleFunc("/id={id}", c.PostUpdateOnDelivery).Methods("POST")

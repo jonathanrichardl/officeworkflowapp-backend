@@ -6,6 +6,7 @@ type Requirements struct {
 	ExpectedOutcome string `json:"outcome"`
 	Status          bool   `json:"status"`
 	OrderID         string `json:"order_id,omitempty"`
+	UserID          string `json:"user_id,omitempty"`
 }
 
 type RequirementPatch struct {
@@ -13,8 +14,9 @@ type RequirementPatch struct {
 }
 
 type Patch struct {
-	Id              int    `json:"id"`
-	ExpectedOutcome string `json:"outcome"`
+	Id              int     `json:"id"`
+	UserID          *string `json:"user_id,omitempty"`
+	ExpectedOutcome *string `json:"outcome,omitempty"`
 }
 
 type ProgressForm struct {

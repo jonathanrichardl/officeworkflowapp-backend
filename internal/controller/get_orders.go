@@ -11,7 +11,6 @@ import (
 )
 
 func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	orders, err := c.order.ListOrders()
 	if err != nil {
 		c.logger.ErrorLogger.Println("Error retrieving orders from database: ", err.Error())
@@ -28,6 +27,18 @@ func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request
 	}
 	json.NewEncoder(w).Encode(response)
 
+}
+
+func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
+	userID := r.Header.Get("ID")
+	fmt.Println(userID)
+	tasks, err := c.requirements.GetRequirementsbyUserId(userID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error retrieving tasks : ", err.Error())
+	}
+	response := models.BuildTasks(tasks)
+	json.NewEncoder(w).Encode(response)
 }
 
 func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {

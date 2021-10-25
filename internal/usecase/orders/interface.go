@@ -1,7 +1,7 @@
 package orders
 
 import (
-	"order-validation-v2/internal/entity"
+	"clean/internal/entity"
 	"time"
 )
 
@@ -25,7 +25,6 @@ type Repository interface {
 	Writer
 }
 
-//UseCase interface
 type UseCase interface {
 	GetOrder(id string) (*entity.Orders, error)
 	SearchOrders(query string) ([]*entity.Orders, error)

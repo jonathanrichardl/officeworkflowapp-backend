@@ -1,7 +1,6 @@
 package requirements
 
 import (
-	"database/sql"
 	"order-validation-v2/internal/entity"
 )
 
@@ -10,7 +9,8 @@ type Reader interface {
 	Get(id int) (*entity.Requirements, error)
 	Search(query string) ([]*entity.Requirements, error)
 	List() ([]*entity.Requirements, error)
-	CustomQuery(query string) (*sql.Rows, error)
+	GetByOrderID(orderID string) ([]*entity.Requirements, error)
+	GetByUserID(userID string) ([]*entity.Requirements, error)
 }
 
 //Writer user writer
@@ -29,10 +29,11 @@ type Repository interface {
 //UseCase interface
 type UseCase interface {
 	GetRequirementbyID(id int) (*entity.Requirements, error)
-	GetRequirementsbyOrderId(id string) ([]*entity.Requirements, error)
+	GetRequirementsbyOrderId(orderID string) ([]*entity.Requirements, error)
+	GetRequirementsbyUserId(userID string) ([]*entity.Requirements, error)
 	SearchRequirements(query string) ([]*entity.Requirements, error)
 	ListRequirements() ([]*entity.Requirements, error)
-	CreateRequirement(request string, expectedOutcome string, orderID string) (int, error)
+	CreateRequirement(request string, expectedOutcome string, orderID string, userID *string) (int, error)
 	UpdateRequirement(e *entity.Requirements) error
 	DeleteRequirement(id int) error
 }
