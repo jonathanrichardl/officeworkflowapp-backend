@@ -96,13 +96,11 @@ func (s *Service) Login(username string, password string) (string, bool, error) 
 		return username, false, errors.New("Username/Password wrong")
 	}
 	sum := sha256.Sum256([]byte(password))
-	elloy := fmt.Sprintf("%x", sum)
+	incomingPassword := fmt.Sprintf("\\x+%x", sum)
 
-	u.Password = "\\x" + u.Password
-
-	fmt.Println(elloy)
+	fmt.Println(incomingPassword)
 	fmt.Println(u.Password)
-	if u.Password == elloy {
+	if u.Password == incomingPassword {
 		return u.ID, true, nil
 
 	}
