@@ -20,7 +20,7 @@ func NewUserPSQL(db *sql.DB) *UserPSQL {
 func (r *UserPSQL) Create(u *entity.User) (string, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO users (id, username, email, password) 
-		values($1, $2, md5($3), md5($4))`)
+		values($1, $2, $3, sha256($4))`)
 	if err != nil {
 		return u.ID, err
 	}
@@ -68,7 +68,7 @@ func (r *UserPSQL) GetbyID(ID string) (*entity.User, error) {
 }
 
 func (r *UserPSQL) Update(u *entity.User) error {
-	_, err := r.db.Exec("UPDATE users SET pswd = md5($1),  username = $2, email = md5($3) where username = $4",
+	_, err := r.db.Exec("UPDATE users SET pswd = sha256($1),  username = $2, email = $3 where username = $4",
 		u.Password, u.Username, u.Email, u.Username)
 	if err != nil {
 		return err
