@@ -1,7 +1,7 @@
 package orders
 
 import (
-	"clean/internal/entity"
+	"order-validation-v2/internal/entity"
 	"time"
 )
 
