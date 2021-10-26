@@ -1,13 +1,16 @@
 package controller
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
-func (c *Controller) validateJWT(next http.Handler) http.Handler {
+type ctxKey struct{}
+
+func (c *Controller) validateUserJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		authorization := r.Header.Get("JWT")
@@ -25,7 +28,39 @@ func (c *Controller) validateJWT(next http.Handler) http.Handler {
 			return
 		}
 		id := fmt.Sprintf("%v", claims["user_id"])
-		r.Header.Set("ID", id)
+		ctx := context.WithValue(r.Context(), ctxKey{}, id)
+		r = r.WithContext(ctx)
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+		next.ServeHTTP(w, r)
+
+	})
+}
+func (c *Controller) validateAdminJWT(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		authorization := r.Header.Get("JWT")
+		if authorization == "" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		claims := jwt.MapClaims{}
+		_, err := jwt.ParseWithClaims(authorization, claims, func(token *jwt.Token) (interface{}, error) {
+			return []byte("SUPERSECRETPASSWORD"), nil
+		})
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			c.logger.ErrorLogger.Println("Error processing JWT: ", err.Error())
+			return
+		}
+		id := fmt.Sprintf("%v", claims["user_id"])
+		role := fmt.Sprintf("%v", claims["authorization"])
+		if role != "Admin" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+		ctx := context.WithValue(r.Context(), ctxKey{}, id)
+		r = r.WithContext(ctx)
 		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		next.ServeHTTP(w, r)
