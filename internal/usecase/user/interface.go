@@ -18,7 +18,7 @@ type Reader interface {
 type Writer interface {
 	Create(r *entity.User) (string, error)
 	Update(r *entity.User) error
-	Delete(username string) error
+	Delete(ID string) error
 }
 
 //Repository interface
@@ -31,8 +31,8 @@ type UseCase interface {
 	GetUserbyUsername(username string) (*entity.User, error)
 	SearchUser(query string) ([]*entity.User, error)
 	ListUsers() ([]*entity.User, error)
-	CreateUser(username string, email string, password string) (string, error)
+	CreateUser(username string, email string, password string, role string) (string, error)
 	UpdateUser(u *entity.User) error
 	DeleteUser(username string) error
-	Login(username string, password string) (string, bool, error)
+	Login(username string, password string) (string, string, bool, error)
 }

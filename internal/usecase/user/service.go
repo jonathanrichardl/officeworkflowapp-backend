@@ -32,8 +32,8 @@ func (s *Service) GetUserbyID(id string) (*entity.User, error) {
 	return u, nil
 }
 
-func (s *Service) CreateUser(username string, email string, password string) (string, error) {
-	u := entity.NewUser(email, username, password)
+func (s *Service) CreateUser(username string, email string, password string, role string) (string, error) {
+	u := entity.NewUser(email, username, password, role)
 	return s.repo.Create(u)
 
 }
@@ -86,20 +86,20 @@ func (s *Service) UpdateUser(u *entity.User) error {
 	return s.repo.Update(u)
 }
 
-func (s *Service) Login(username string, password string) (string, bool, error) {
+func (s *Service) Login(username string, password string) (string, string, bool, error) {
 	u, err := s.repo.GetbyUsername(username)
 	if err != nil {
-		return username, false, err
+		return username, "", false, err
 	}
 
 	if u == nil {
-		return username, false, errors.New("Username/Password wrong")
+		return username, "", false, errors.New("Username/Password wrong")
 	}
 	sum := sha256.Sum256([]byte(password))
 	if u.Password == fmt.Sprintf("%x", sum) {
-		return u.ID, true, nil
+		return u.ID, u.UserRole, true, nil
 
 	}
-	return username, false, errors.New("Username/Password wrong")
+	return username, u.UserRole, false, errors.New("Username/Password wrong")
 
 }
