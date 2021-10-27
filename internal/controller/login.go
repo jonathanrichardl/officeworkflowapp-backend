@@ -29,6 +29,7 @@ func (c *Controller) Login(w http.ResponseWriter, r *http.Request) {
 	ID, role, ok, err := c.user.Login(form.Username, form.Password)
 	if err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
+		w.Write([]byte("Username or Password is Wrong"))
 		c.logger.ErrorLogger.Println("Error while logging in ", err.Error())
 		return
 	}
