@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"order-validation-v2/internal/controller/models"
+	"order-validation-v2/internal/entity"
 
 	"github.com/gorilla/mux"
 )
@@ -17,8 +18,28 @@ func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error retrieving tasks : ", err.Error())
+		return
+	}
+	if tasks == nil {
+		w.WriteHeader(http.StatusOK)
+		return
 	}
 	response := models.BuildTasks(tasks)
+	m := make(map[string]entity.Orders)
+	for _, task := range response {
+		if order, ok := m[task.OrderID]; ok {
+			task.OrderDescription = order.Description
+			task.OrderDeadline = order.Deadline.Format("2006-01-02 15:04:05")
+			task.OrderTitle = order.Title
+			continue
+		}
+		order, _ := c.order.GetOrder(task.OrderID)
+		task.OrderDescription = order.Description
+		task.OrderDeadline = order.Deadline.Format("2006-01-02 15:04:05")
+		task.OrderTitle = order.Title
+		m[task.OrderID] = *order
+	}
+
 	json.NewEncoder(w).Encode(response)
 }
 

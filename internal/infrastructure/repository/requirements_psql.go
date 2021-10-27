@@ -2,7 +2,6 @@ package repository
 
 import (
 	"database/sql"
-	"fmt"
 
 	"order-validation-v2/internal/entity"
 )
@@ -134,7 +133,9 @@ func (r *RequirementsPSQL) GetByUserID(userID string) ([]*entity.Requirements, e
 			return nil, err
 		}
 		requirements = append(requirements, &q)
-		fmt.Println("OK")
+	}
+	if len(requirements) == 0 {
+		return nil, nil
 	}
 	return requirements, nil
 }
@@ -156,6 +157,10 @@ func (r *RequirementsPSQL) GetByOrderID(orderID string) ([]*entity.Requirements,
 			return nil, err
 		}
 		requirements = append(requirements, &q)
+	}
+
+	if len(requirements) == 0 {
+		return nil, nil
 	}
 	return requirements, nil
 }

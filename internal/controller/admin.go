@@ -80,7 +80,6 @@ func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Can't add new order into database : ", err.Error())
 	}
 	for _, requirement := range order.Requirements {
-		fmt.Println(requirement.UserID)
 		_, err := c.requirements.CreateRequirement(requirement.Request, requirement.ExpectedOutcome, id, &requirement.UserID)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
@@ -113,7 +112,6 @@ func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Printf("Error retrieving requirements for order %s from database: %s\n", uuid, err.Error())
 		return
 	}
-	fmt.Println(requirements[0].Status)
 	response[0].AddRequirements(requirements)
 
 	json.NewEncoder(w).Encode(response)
