@@ -13,7 +13,29 @@ import (
 )
 
 func (c *Controller) NewUser(w http.ResponseWriter, r *http.Request) {
-
+	var newUser models.NewUser
+	req, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+		c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
+		return
+	}
+	err = json.Unmarshal(req, &newUser)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+		c.logger.ErrorLogger.Println("Invalid Request, Can't unmarshal :", err.Error())
+		return
+	}
+	id, err := c.user.CreateUser(newUser.Username, newUser.Email, newUser.Password, newUser.Role)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while creating new user: ", err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf("User %s has been added with id %s\n", newUser.Username, id)))
 }
 
 func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request) {
