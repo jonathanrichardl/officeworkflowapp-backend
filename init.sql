@@ -31,15 +31,15 @@ CREATE TABLE users(
     username varchar(50),
     pswd varchar (258),
     email varchar(30),
-    userrole varchar(7)
+    user_role varchar(7)
 );
 CREATE TABLE requirements(
     id SERIAL PRIMARY KEY,
     request varchar(50),
-    expectedoutcome varchar(50),
-    orderid varchar(37),
+    expected_outcome varchar(50),
+    order_id varchar(37),
     status bool,
-    FOREIGN KEY(orderid) REFERENCES orders(id)
+    FOREIGN KEY(order_id) REFERENCES orders(id)
 );
 
 CREATE TABLE tasks(
@@ -68,7 +68,7 @@ CREATE TABLE image_submissions(
 
 
 INSERT INTO users 
-(id, username, pswd, email, userrole)
+(id, username, pswd, email, user_role)
 VALUES ('cd75bf2e-0876-46b4-a7a2-355ba2e8e034', 'elloy', sha256('100300'), 'elloy@elloy.com', 'Admin');
 
 INSERT INTO users 
@@ -76,6 +76,6 @@ INSERT INTO users
 VALUES ('10b16316-ec54-4fdf-9a30-8deded11f633', 'jorich', sha256('100300'), 'jorich@elloy.com', 'User');
 
 INSERT INTO users 
-(id, username, pswd, email, userrole)
+(id, username, pswd, email, user_role)
 VALUES ('1241241', 'ervin', sha256('100300'), 'ervin@ymail.com', 'User');
 

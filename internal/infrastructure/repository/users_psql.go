@@ -18,7 +18,7 @@ func NewUserPSQL(db *sql.DB) *UserPSQL {
 
 func (r *UserPSQL) Create(u *entity.User) (string, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO users (id, username, email, password, userrole) 
+		INSERT INTO users (id, username, email, pswd, userrole) 
 		values($1, $2, $3, sha256($4), $5)`)
 	if err != nil {
 		return u.ID, err
