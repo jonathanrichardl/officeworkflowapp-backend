@@ -46,7 +46,7 @@ CREATE TABLE tasks(
 	ID varchar(37) PRIMARY KEY,
 	user_id varchar(37),
 	requirement_id int,
-    fulfillment_status tinyint,
+    fulfillment_status smallint,
     FOREIGN KEY (requirement_id) REFERENCES requirements(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
