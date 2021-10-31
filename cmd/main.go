@@ -10,13 +10,14 @@ import (
 	"order-validation-v2/internal/usecase/tasks"
 	"order-validation-v2/internal/usecase/user"
 	"order-validation-v2/pkg/logger"
+	"os"
 
 	_ "github.com/lib/pq"
 )
 
 func main() {
 	logger := logger.NewLogger()
-	db, err := sql.Open("mysql", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
 	}
