@@ -5,18 +5,14 @@ type Requirements struct {
 	Request         string
 	ExpectedOutcome string
 	OrderID         string
-	UserID          string
 	Status          bool
 }
 
-func NewRequirement(request string, expectedOutcome string, orderID string, userID *string) *Requirements {
+func NewRequirement(request string, expectedOutcome string, orderID string) *Requirements {
 	r := &Requirements{
 		Request:         request,
 		ExpectedOutcome: expectedOutcome,
 		OrderID:         orderID,
-	}
-	if userID != nil {
-		r.UserID = *userID
 	}
 	return r
 
@@ -25,8 +21,4 @@ func NewRequirement(request string, expectedOutcome string, orderID string, user
 func (r *Requirements) SetStatus(newStatus bool) {
 	r.Status = newStatus
 
-}
-
-func (r *Requirements) AssignUser(UserID string) {
-	r.UserID = UserID
 }

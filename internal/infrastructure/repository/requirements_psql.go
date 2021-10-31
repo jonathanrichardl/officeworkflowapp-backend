@@ -18,8 +18,8 @@ func NewRequirementsPSQL(db *sql.DB) *RequirementsPSQL {
 
 func (r *RequirementsPSQL) Create(e *entity.Requirements) (int, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO requirements (request, expectedoutcome, orderid, status, userid) 
-		values($1,$2,$3,'0', $4)`)
+		INSERT INTO requirements (request, expected_outcome, order_id, status) 
+		values($1,$2,$3,'0')`)
 	if err != nil {
 		return -1, err
 	}
@@ -27,7 +27,6 @@ func (r *RequirementsPSQL) Create(e *entity.Requirements) (int, error) {
 		e.Request,
 		e.ExpectedOutcome,
 		e.OrderID,
-		e.UserID,
 	)
 	if err != nil {
 		return -1, err
@@ -43,13 +42,13 @@ func (r *RequirementsPSQL) Create(e *entity.Requirements) (int, error) {
 }
 
 func (r *RequirementsPSQL) Get(ID int) (*entity.Requirements, error) {
-	stmt, err := r.db.Prepare(`SELECT * FROM requirements where id = $1`)
+	stmt, err := r.db.Prepare(`SELECT ID, request, expected_outcome, order_id, status FROM requirements where id = $1`)
 	if err != nil {
 		return nil, err
 	}
 	var q entity.Requirements
 	row := stmt.QueryRow(ID)
-	err = row.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.OrderID, &q.UserID, &q.Status)
+	err = row.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.OrderID, &q.Status)
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +76,7 @@ func (r *RequirementsPSQL) Search(query string) ([]*entity.Requirements, error) 
 	}
 	for rows.Next() {
 		var q entity.Requirements
-		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.OrderID, &q.UserID, &q.Status)
+		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.OrderID, &q.Status)
 		if err != nil {
 			return nil, err
 		}
@@ -99,7 +98,7 @@ func (r *RequirementsPSQL) List() ([]*entity.Requirements, error) {
 	}
 	for rows.Next() {
 		var q entity.Requirements
-		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.OrderID, &q.UserID, &q.Status)
+		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.Status, &q.OrderID)
 		if err != nil {
 			return nil, err
 		}
@@ -116,32 +115,8 @@ func (r *RequirementsPSQL) Delete(id int) error {
 	return nil
 }
 
-func (r *RequirementsPSQL) GetByUserID(userID string) ([]*entity.Requirements, error) {
-	stmt, err := r.db.Prepare("SELECT * FROM requirements where userid = $1")
-	if err != nil {
-		return nil, err
-	}
-	var requirements []*entity.Requirements
-	rows, err := stmt.Query(userID)
-	if err != nil {
-		return nil, err
-	}
-	for rows.Next() {
-		var q entity.Requirements
-		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.OrderID, &q.UserID, &q.Status)
-		if err != nil {
-			return nil, err
-		}
-		requirements = append(requirements, &q)
-	}
-	if len(requirements) == 0 {
-		return nil, nil
-	}
-	return requirements, nil
-}
-
 func (r *RequirementsPSQL) GetByOrderID(orderID string) ([]*entity.Requirements, error) {
-	stmt, err := r.db.Prepare("SELECT * FROM requirements where orderid = $1")
+	stmt, err := r.db.Prepare("SELECT * FROM requirements where order_id = $1")
 	if err != nil {
 		return nil, err
 	}
@@ -152,7 +127,7 @@ func (r *RequirementsPSQL) GetByOrderID(orderID string) ([]*entity.Requirements,
 	}
 	for rows.Next() {
 		var q entity.Requirements
-		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.UserID, &q.OrderID, &q.Status)
+		err = rows.Scan(&q.Id, &q.Request, &q.ExpectedOutcome, &q.OrderID, &q.Status)
 		if err != nil {
 			return nil, err
 		}

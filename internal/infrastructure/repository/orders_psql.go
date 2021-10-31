@@ -84,7 +84,6 @@ func (r *OrdersPSQL) Search(query string) ([]*entity.Orders, error) {
 	return orders, nil
 }
 
-//List books
 func (r *OrdersPSQL) List() ([]*entity.Orders, error) {
 	stmt, err := r.db.Prepare(`SELECT * FROM orders`)
 	if err != nil {
@@ -106,7 +105,6 @@ func (r *OrdersPSQL) List() ([]*entity.Orders, error) {
 	return orders, nil
 }
 
-//Delete a book
 func (r *OrdersPSQL) Delete(id string) error {
 	_, err := r.db.Exec("DELETE FROM orders where id = $1", id)
 	if err != nil {

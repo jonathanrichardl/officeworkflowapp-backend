@@ -19,13 +19,10 @@ type Patch struct {
 	ExpectedOutcome *string `json:"outcome,omitempty"`
 }
 
-type ProgressForm struct {
-	Fufillments []Fufillment `json:"fufillments"`
-}
-
-type Fufillment struct {
-	Requirementid int    `json:"reqid"`
-	Outcome       string `json:"outcome"`
+type Submission struct {
+	TaskID  string   `json:"task_id"`
+	Images  [][]byte `json:"images"`
+	Message string   `json:"message"`
 }
 
 type LoginForm struct {

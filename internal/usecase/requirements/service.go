@@ -20,13 +20,8 @@ func NewService(r Repository) *Service {
 func (s *Service) GetRequirementsbyOrderId(orderID string) ([]*entity.Requirements, error) {
 	return s.repo.GetByOrderID(orderID)
 }
-
-func (s *Service) GetRequirementsbyUserId(userID string) ([]*entity.Requirements, error) {
-	return s.repo.GetByUserID(userID)
-
-}
 func (s *Service) CreateRequirement(request string, expectedOutcome string, orderID string, userID *string) (int, error) {
-	e := entity.NewRequirement(request, expectedOutcome, orderID, userID)
+	e := entity.NewRequirement(request, expectedOutcome, orderID)
 	return s.repo.Create(e)
 }
 
@@ -38,7 +33,6 @@ func (s *Service) SearchRequirements(query string) ([]*entity.Requirements, erro
 	return s.repo.Search(strings.ToLower(query))
 }
 
-//ListUsers List users
 func (s *Service) ListRequirements() ([]*entity.Requirements, error) {
 	return s.repo.List()
 }
@@ -54,7 +48,6 @@ func (s *Service) DeleteRequirement(id int) error {
 	return s.repo.Delete(id)
 }
 
-//UpdateUser Update an user
 func (s *Service) UpdateRequirement(e *entity.Requirements) error {
 	return s.repo.Update(e)
 }

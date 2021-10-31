@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"order-validation-v2/internal/usecase/orders"
 	"order-validation-v2/internal/usecase/requirements"
+	"order-validation-v2/internal/usecase/submissions"
+	"order-validation-v2/internal/usecase/tasks"
 	"order-validation-v2/internal/usecase/user"
 	"order-validation-v2/pkg/logger"
-	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -15,13 +16,15 @@ type Controller struct {
 	router       *mux.Router
 	order        orders.UseCase
 	user         user.UseCase
+	task         tasks.UseCase
+	submissions  submissions.UseCase
 	requirements requirements.UseCase
 	logger       *logger.LoggerInstance
 }
 
-func NewController(o orders.UseCase, u user.UseCase, r requirements.UseCase, l *logger.LoggerInstance) *Controller {
+func NewController(o orders.UseCase, u user.UseCase, r requirements.UseCase, t tasks.UseCase, s submissions.UseCase, l *logger.LoggerInstance) *Controller {
 	router := mux.NewRouter().StrictSlash(true)
-	controller := &Controller{router: router, order: o, user: u, requirements: r, logger: l}
+	controller := &Controller{router: router, order: o, user: u, requirements: r, task: t, submissions: s, logger: l}
 	return controller
 }
 
@@ -47,6 +50,5 @@ func (c *Controller) RegisterHandler() {
 }
 
 func (c *Controller) Start() {
-	port := os.Getenv("PORT")
-	http.ListenAndServe(":"+port, c.router)
+	http.ListenAndServe(":8080", c.router)
 }
