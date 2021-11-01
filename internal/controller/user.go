@@ -49,6 +49,19 @@ func (c *Controller) PostUpdateOnTask(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Invalid Request"))
 		return
 	}
+	task, err := c.task.Get(submission.TaskID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while updating task: ", err.Error())
+		return
+	}
+	task.Status = 1
+	err = c.task.UpdateTask(task)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while updating task: ", err.Error())
+		return
+	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("Submission has been accepted, id = %s", id)))
 

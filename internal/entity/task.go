@@ -24,6 +24,7 @@ type Task struct {
 
 func NewTask(requirementID int, userID string) *Task {
 	return &Task{
+		ID:            NewUUID().String(),
 		RequirementID: requirementID,
 		UserID:        userID,
 		Status:        0,

@@ -2,11 +2,11 @@ package entity
 
 type SubmissionImage struct {
 	ID           int
-	Image        []byte
+	Image        string
 	SubmissionID string
 }
 
-func NewImage(ID int, Image []byte, SubmissionID string) SubmissionImage {
+func NewImage(ID int, Image string, SubmissionID string) SubmissionImage {
 	return SubmissionImage{
 		ID:           ID,
 		Image:        Image,

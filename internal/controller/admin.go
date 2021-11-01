@@ -206,3 +206,27 @@ func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) 
 	}
 
 }
+
+func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
+	var newTask models.NewTask
+	req, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+		return
+	}
+	err = json.Unmarshal(req, &newTask)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+		return
+	}
+	id, err := c.task.CreateTask(newTask.RequirementID, newTask.UserID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error creating new task: ", err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte(fmt.Sprintf("Task %s has been created for user %s\n", id, newTask.UserID)))
+}

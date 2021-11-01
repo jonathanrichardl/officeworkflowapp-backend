@@ -21,7 +21,7 @@ type Patch struct {
 
 type Submission struct {
 	TaskID  string   `json:"task_id"`
-	Images  [][]byte `json:"images"`
+	Images  []string `json:"images"`
 	Message string   `json:"message"`
 }
 

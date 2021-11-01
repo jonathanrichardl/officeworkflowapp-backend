@@ -103,7 +103,7 @@ func (r *SubmissionPSQL) Get(id string) (*entity.Submission, error) {
 }
 
 func (r *SubmissionPSQL) Update(e *entity.Submission) error {
-	_, err := r.db.Exec("UPDATE submissions SET message = $1, submit_time = $2 where id = $3", e.Message, e.SubmissionTime, e.ID)
+	_, err := r.db.Exec("UPDATE submissions SET message = $1, submit_time =$2 where id = $3", e.Message, e.SubmissionTime, e.ID)
 	if err != nil {
 		return err
 	}

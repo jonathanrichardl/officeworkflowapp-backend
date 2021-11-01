@@ -12,6 +12,11 @@ type Tasks struct {
 	OrderDeadline    string        `json:"order_deadline"`
 }
 
+type NewTask struct {
+	RequirementID int    `json:"requirement_id"`
+	UserID        string `json:"user_id"`
+}
+
 func BuildTasks(T []*entity.Task) []*Tasks {
 	var tasks []*Tasks
 	for _, t := range T {

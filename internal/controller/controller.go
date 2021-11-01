@@ -8,7 +8,6 @@ import (
 	"order-validation-v2/internal/usecase/tasks"
 	"order-validation-v2/internal/usecase/user"
 	"order-validation-v2/pkg/logger"
-	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -47,10 +46,10 @@ func (c *Controller) RegisterHandler() {
 	admin.HandleFunc("/orders/id={id}", c.ModifyRequirements).Methods("PATCH")
 	admin.HandleFunc("/orders/search:{query}", c.SearchOrders).Methods("GET")
 	admin.HandleFunc("/user", c.NewUser).Methods("POST")
+	admin.HandleFunc("/tasks", c.AddNewTask).Methods("POST")
 
 }
 
 func (c *Controller) Start() {
-	port := os.Getenv("PORT")
-	http.ListenAndServe(":"+port, c.router)
+	http.ListenAndServe(":8080", c.router)
 }

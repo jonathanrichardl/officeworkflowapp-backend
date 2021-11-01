@@ -17,8 +17,12 @@ func (s *Service) ListAllTasks() ([]*entity.Task, error) {
 }
 
 func (s *Service) GetTasksofUser(userID string) ([]*entity.Task, error) {
-	return s.repo.Get(userID)
+	return s.repo.GetbyUserID(userID)
 
+}
+
+func (s *Service) Get(id string) (*entity.Task, error) {
+	return s.repo.Get(id)
 }
 
 func (s *Service) UpdateTask(t *entity.Task) error {

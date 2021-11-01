@@ -5,7 +5,8 @@ import (
 )
 
 type Reader interface {
-	Get(userID string) ([]*entity.Task, error)
+	Get(id string) (*entity.Task, error)
+	GetbyUserID(userID string) ([]*entity.Task, error)
 	List() ([]*entity.Task, error)
 }
 
@@ -21,6 +22,7 @@ type Repository interface {
 }
 
 type UseCase interface {
+	Get(id string) (*entity.Task, error)
 	ListAllTasks() ([]*entity.Task, error)
 	GetTasksofUser(userID string) ([]*entity.Task, error)
 	UpdateTask(t *entity.Task) error

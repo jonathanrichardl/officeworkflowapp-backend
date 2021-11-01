@@ -13,7 +13,7 @@ func NewService(r Repository) *Service {
 		repo: r,
 	}
 }
-func (s *Service) NewSubmission(message string, images [][]byte, TaskID string) (string, error) {
+func (s *Service) NewSubmission(message string, images []string, TaskID string) (string, error) {
 	submission := entity.NewSubmission(message, images, TaskID)
 	return s.repo.Create(submission)
 }

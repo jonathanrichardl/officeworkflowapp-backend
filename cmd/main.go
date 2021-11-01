@@ -21,7 +21,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	taskRepo := repository.NewTaskMySQL(db)
+	taskRepo := repository.NewTaskPSQL(db)
 	submissionRepo := repository.NewSubmissionPSQL(db)
 	orderRepo := repository.NewOrdersPSQL(db)
 	requirementRepo := repository.NewRequirementsPSQL(db)

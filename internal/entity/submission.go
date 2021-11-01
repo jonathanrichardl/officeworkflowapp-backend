@@ -12,7 +12,7 @@ type Submission struct {
 	TaskID         string
 }
 
-func NewSubmission(Message string, Images [][]byte, TaskID string) *Submission {
+func NewSubmission(Message string, Images []string, TaskID string) *Submission {
 	id := NewUUID().String()
 	submitTime := time.Now()
 	var submissionImages []SubmissionImage
