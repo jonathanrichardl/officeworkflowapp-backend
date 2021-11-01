@@ -56,7 +56,7 @@ func (r *RequirementsPSQL) Get(ID int) (*entity.Requirements, error) {
 }
 
 func (r *RequirementsPSQL) Update(e *entity.Requirements) error {
-	_, err := r.db.Exec("UPDATE requirements SET request = $1,  expectedoutcome = $2, status = $3 where id = $4",
+	_, err := r.db.Exec("UPDATE requirements SET request = $1,  expected_outcome = $2, status = $3 where id = $4",
 		e.Request, e.ExpectedOutcome, e.Status, e.Id)
 	if err != nil {
 		return err
