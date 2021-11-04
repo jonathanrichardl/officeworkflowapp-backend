@@ -36,7 +36,9 @@ func (c *Controller) RegisterHandler() {
 	userapp := c.router.PathPrefix("/orders").Subrouter()
 	userapp.Use(c.validateUserJWT)
 	userapp.HandleFunc("/", c.GetTasks).Methods("GET")
-	userapp.HandleFunc("/submission", c.PostUpdateOnTask).Methods("POST")
+	userapp.HandleFunc("/submission", c.PostSubmission).Methods("POST")
+	userapp.HandleFunc("/task={id}", c.GetSubmission).Methods("GET")
+	userapp.HandleFunc("/submission/id={id}", c.UpdateSubmission).Methods("POST")
 
 	admin := c.router.PathPrefix("/admin").Subrouter()
 	admin.Use(c.validateAdminJWT)
