@@ -31,7 +31,7 @@ CREATE TABLE users(
     username varchar(50),
     pswd varchar (258),
     email varchar(30),
-    user_role varchar(7)
+    userrole varchar(7)
 );
 CREATE TABLE requirements(
     id SERIAL PRIMARY KEY,
@@ -68,7 +68,7 @@ CREATE TABLE image_submissions(
 
 
 INSERT INTO users 
-(id, username, pswd, email, user_role)
+(id, username, pswd, email, userrole)
 VALUES ('cd75bf2e-0876-46b4-a7a2-355ba2e8e034', 'elloy', sha256('100300'), 'elloy@elloy.com', 'Admin');
 
 INSERT INTO users 

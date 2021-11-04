@@ -8,6 +8,7 @@ import (
 	"order-validation-v2/internal/usecase/tasks"
 	"order-validation-v2/internal/usecase/user"
 	"order-validation-v2/pkg/logger"
+	"os"
 
 	"github.com/gorilla/mux"
 )
@@ -53,5 +54,6 @@ func (c *Controller) RegisterHandler() {
 }
 
 func (c *Controller) Start() {
-	http.ListenAndServe(":8080", c.router)
+	port := os.Getenv("PORT")
+	http.ListenAndServe(":"+port, c.router)
 }

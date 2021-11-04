@@ -66,7 +66,7 @@ func (r *SubmissionPSQL) Create(e *entity.Submission) (string, error) {
 }
 
 func (r *SubmissionPSQL) GetByTaskID(taskID string) ([]*entity.Submission, error) {
-	statement, err := r.db.Prepare(`SELECT id, submit_time, message FROM submissions where taskID = $1`)
+	statement, err := r.db.Prepare(`SELECT id, submit_time, message FROM submissions where task_id = $1`)
 	if err != nil {
 		return nil, err
 	}
