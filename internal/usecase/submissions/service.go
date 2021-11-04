@@ -13,10 +13,12 @@ func NewService(r Repository) *Service {
 		repo: r,
 	}
 }
+
 func (s *Service) NewSubmission(message string, images []string, TaskID string) (string, error) {
 	submission := entity.NewSubmission(message, images, TaskID)
 	return s.repo.Create(submission)
 }
+
 func (s *Service) EditSubmission(e *entity.Submission) error {
 	return s.repo.Update(e)
 }
@@ -26,6 +28,6 @@ func (s *Service) DeleteSubmission(id string) error {
 
 }
 
-func (s *Service) GetSubmission(id string) (*entity.Submission, error) {
-	return s.repo.Get(id)
+func (s *Service) GetSubmission(taskID string) ([]*entity.Submission, error) {
+	return s.repo.GetByTaskID(taskID)
 }

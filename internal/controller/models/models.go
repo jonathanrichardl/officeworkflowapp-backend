@@ -19,12 +19,6 @@ type Patch struct {
 	ExpectedOutcome *string `json:"outcome,omitempty"`
 }
 
-type Submission struct {
-	TaskID  string   `json:"task_id"`
-	Images  []string `json:"images"`
-	Message string   `json:"message"`
-}
-
 type LoginForm struct {
 	Username string `json:"username"`
 	Password string `json:"password"`

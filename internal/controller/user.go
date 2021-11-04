@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"order-validation-v2/internal/controller/models"
+	"order-validation-v2/vendor/github.com/gorilla/mux"
 )
 
 func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +27,22 @@ func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func (c *Controller) PostUpdateOnTask(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetSubmission(w http.ResponseWriter, r *http.Request) {
+	request := mux.Vars(r)
+	id := request["id"]
+	submission, err := c.submissions.GetSubmission(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while getting submissions: ", err.Error())
+		return
+	}
+	response := models.BuildSubmissionPayload(submission)
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+
+}
+
+func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
 	var submission models.Submission
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -42,7 +58,8 @@ func (c *Controller) PostUpdateOnTask(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Invalid Request"))
 		return
 	}
-	id, err := c.submissions.NewSubmission(submission.Message, submission.Images, submission.TaskID)
+	image := models.DecodeSubmissionPayload(submission)
+	id, err := c.submissions.NewSubmission(submission.Message, image, submission.TaskID)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		c.logger.ErrorLogger.Println("Error while adding submission: ", err.Error())
@@ -64,5 +81,9 @@ func (c *Controller) PostUpdateOnTask(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("Submission has been accepted, id = %s", id)))
+
+}
+
+func (c *Controller) UpdateSubmission(w http.ResponseWriter, r *http.Request) {
 
 }

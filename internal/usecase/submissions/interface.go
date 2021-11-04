@@ -5,7 +5,7 @@ import (
 )
 
 type Reader interface {
-	Get(id string) (*entity.Submission, error)
+	GetByTaskID(taskID string) ([]*entity.Submission, error)
 }
 
 type Writer interface {
@@ -23,5 +23,5 @@ type UseCase interface {
 	NewSubmission(message string, images []string, TaskID string) (string, error)
 	EditSubmission(e *entity.Submission) error
 	DeleteSubmission(id string) error
-	GetSubmission(id string) (*entity.Submission, error)
+	GetSubmission(taskID string) ([]*entity.Submission, error)
 }

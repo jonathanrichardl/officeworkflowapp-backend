@@ -65,8 +65,8 @@ func (r *SubmissionPSQL) Create(e *entity.Submission) (string, error) {
 	return e.ID, nil
 }
 
-func (r *SubmissionPSQL) Get(id string) (*entity.Submission, error) {
-	statement, err := r.db.Prepare(`SELECT id, submit_time, message FROM submissions where id = $1`)
+func (r *SubmissionPSQL) GetByTaskID(taskID string) ([]*entity.Submission, error) {
+	statement, err := r.db.Prepare(`SELECT id, submit_time, message FROM submissions where taskID = $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -74,32 +74,35 @@ func (r *SubmissionPSQL) Get(id string) (*entity.Submission, error) {
 	if err != nil {
 		return nil, err
 	}
-	var s entity.Submission
-	submission := statement.QueryRow(id)
+	var submissions []*entity.Submission
+	submission, err := statement.Query(taskID)
 	if err != nil {
 		return nil, err
 	}
-
-	err = submission.Scan(&s.ID, &s.SubmissionTime, &s.Message)
-	if err != nil {
-		return nil, err
-	}
-
-	images, err := imageStatement.Query(id)
-	if err != nil {
-		return nil, err
-	}
-
-	for images.Next() {
-		var i entity.SubmissionImage
-		err = images.Scan(&i.ID, &i.Image)
+	for submission.Next() {
+		var s entity.Submission
+		err = submission.Scan(&s.ID, &s.SubmissionTime, &s.Message)
 		if err != nil {
 			return nil, err
 		}
-		s.Images = append(s.Images, i)
+		images, err := imageStatement.Query(s.ID)
+		if err != nil {
+			return nil, err
+		}
 
+		for images.Next() {
+			var i entity.SubmissionImage
+			err = images.Scan(&i.ID, &i.Image)
+			if err != nil {
+				return nil, err
+			}
+			s.Images = append(s.Images, i)
+
+		}
+		submissions = append(submissions, &s)
 	}
-	return &s, nil
+
+	return submissions, nil
 }
 
 func (r *SubmissionPSQL) Update(e *entity.Submission) error {
