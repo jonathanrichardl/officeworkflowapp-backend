@@ -3,14 +3,15 @@ package models
 import "order-validation-v2/internal/entity"
 
 type Submission struct {
-	ID      string  `json:"submission_id"`
-	TaskID  string  `json:"task_id"`
-	Images  []Image `json:"images"`
-	Message string  `json:"message"`
+	ID             string  `json:"submission_id"`
+	SubmissionTime string  `json:"submission_time"`
+	TaskID         string  `json:"task_id"`
+	Images         []Image `json:"images"`
+	Message        string  `json:"message"`
 }
 
 type Image struct {
-	ID    int    `json:"image_id"`
+	ID    int    `json:"image_id,omitempty"`
 	Image string `json:"image"`
 }
 
@@ -33,10 +34,11 @@ func BuildSubmissionPayload(submissions []*entity.Submission) []Submission {
 
 		}
 		submission := Submission{
-			ID:      s.ID,
-			TaskID:  s.TaskID,
-			Images:  images,
-			Message: s.Message,
+			ID:             s.ID,
+			SubmissionTime: s.SubmissionTime.Format("02-Jan-2006 15:04:05"),
+			TaskID:         s.TaskID,
+			Images:         images,
+			Message:        s.Message,
 		}
 		submissionJSON = append(submissionJSON, submission)
 	}

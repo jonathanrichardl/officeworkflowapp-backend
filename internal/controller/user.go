@@ -6,7 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"order-validation-v2/internal/controller/models"
-	"order-validation-v2/vendor/github.com/gorilla/mux"
+
+	"github.com/gorilla/mux"
 )
 
 func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
