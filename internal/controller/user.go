@@ -11,8 +11,6 @@ import (
 )
 
 func (c *Controller) GetUserProfile(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	auth := r.Context().Value(ctxKey{})
 	userID := fmt.Sprintf("%v", auth)
 	user, err := c.user.GetUserbyID(userID)
@@ -32,8 +30,6 @@ func (c *Controller) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	auth := r.Context().Value(ctxKey{})
 	userID := fmt.Sprintf("%v", auth)
 	tasks, err := c.task.GetTasksofUser(userID)
@@ -52,8 +48,6 @@ func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetSubmission(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	request := mux.Vars(r)
 	id := request["id"]
 	submission, err := c.submissions.GetSubmission(id)
@@ -69,8 +63,6 @@ func (c *Controller) GetSubmission(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	var submission models.Submission
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -113,7 +105,5 @@ func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) UpdateSubmission(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 }
