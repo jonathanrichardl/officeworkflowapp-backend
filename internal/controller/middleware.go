@@ -12,6 +12,8 @@ type ctxKey struct{}
 
 func (c *Controller) validateUserJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		authorization := r.Header.Get("JWT")
 		if authorization == "" {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -35,7 +37,8 @@ func (c *Controller) validateUserJWT(next http.Handler) http.Handler {
 }
 func (c *Controller) validateAdminJWT(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		authorization := r.Header.Get("JWT")
 		if authorization == "" {
 			w.WriteHeader(http.StatusUnauthorized)
