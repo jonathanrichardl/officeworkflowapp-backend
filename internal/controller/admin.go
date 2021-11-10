@@ -230,3 +230,18 @@ func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(fmt.Sprintf("Task %s has been created for user %s\n", id, newTask.UserID)))
 }
+
+func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := c.user.ListUsers()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error retrieving all user: ", err.Error())
+		return
+	}
+	var response []models.RetrievedUser
+	for _, user := range users {
+		response = append(response, models.BuildUserProfile(user))
+	}
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(response)
+}
