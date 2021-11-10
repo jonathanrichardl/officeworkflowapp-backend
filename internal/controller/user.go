@@ -30,6 +30,8 @@ func (c *Controller) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	auth := r.Context().Value(ctxKey{})
 	userID := fmt.Sprintf("%v", auth)
 	tasks, err := c.task.GetTasksofUser(userID)
