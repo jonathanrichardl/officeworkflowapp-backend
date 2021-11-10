@@ -43,6 +43,9 @@ func (r *TaskPSQL) Get(id string) (*entity.Task, error) {
 		return nil, err
 	}
 	row := stmt.QueryRow(id)
+	if row == nil {
+		return nil, err
+	}
 	err = row.Scan(&task.ID, &task.RequirementID, &task.UserID, &task.Status)
 	if err != nil {
 		return nil, err
@@ -108,6 +111,9 @@ func (r *TaskPSQL) List() ([]*entity.Task, error) {
 			return nil, err
 		}
 		tasks = append(tasks, &t)
+	}
+	if len(tasks) == 0 {
+		return nil, nil
 	}
 
 	return tasks, nil

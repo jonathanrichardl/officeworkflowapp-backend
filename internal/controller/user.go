@@ -19,9 +19,9 @@ func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Error while getting tasks: ", err.Error())
 		return
 	}
-	fmt.Println("OK")
 	if tasks == nil {
 		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("No Tasks Present"))
 		return
 	}
 	response := models.BuildTasks(tasks)
