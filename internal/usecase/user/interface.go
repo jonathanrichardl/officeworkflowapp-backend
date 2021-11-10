@@ -28,6 +28,7 @@ type Repository interface {
 }
 
 type UseCase interface {
+	GetUserbyID(id string) (*entity.User, error)
 	GetUserbyUsername(username string) (*entity.User, error)
 	SearchUser(query string) ([]*entity.User, error)
 	ListUsers() ([]*entity.User, error)
