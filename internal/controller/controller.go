@@ -10,6 +10,8 @@ import (
 	"order-validation-v2/pkg/logger"
 	"os"
 
+	"github.com/rs/cors"
+
 	"github.com/gorilla/mux"
 )
 
@@ -55,6 +57,8 @@ func (c *Controller) RegisterHandler() {
 }
 
 func (c *Controller) Start() {
+	cors := cors.AllowAll()
 	port := os.Getenv("PORT")
-	http.ListenAndServe(":"+port, c.router)
+	handler := cors.Handler(c.router)
+	http.ListenAndServe(":"+port, handler)
 }
