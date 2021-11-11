@@ -112,7 +112,7 @@ func (r *UserPSQL) List() ([]*entity.User, error) {
 	for rows.Next() {
 		var u entity.User
 		err = rows.Scan(&u.ID,
-			&u.Email, &u.Username, &u.UserRole)
+			&u.Username, &u.Email, &u.UserRole)
 		if err != nil {
 			return nil, err
 		}
