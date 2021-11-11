@@ -52,8 +52,8 @@ func (c *Controller) RegisterHandler() {
 	admin.HandleFunc("/orders/id={id}", c.ModifyRequirements).Methods("PATCH")
 	admin.HandleFunc("/orders/search:{query}", c.SearchOrders).Methods("GET")
 	admin.HandleFunc("/user", c.NewUser).Methods("POST")
+	admin.HandleFunc("/user", c.GetAllUsers).Methods("GET")
 	admin.HandleFunc("/tasks", c.AddNewTask).Methods("POST")
-
 }
 
 func (c *Controller) Start() {
