@@ -8,7 +8,6 @@ type Requirements struct {
 	ExpectedOutcome string        `json:"outcome"`
 	Status          entity.Status `json:"status"`
 	OrderID         string        `json:"order_id,omitempty"`
-	UserID          string        `json:"user_id"`
 }
 
 type RequirementPatch struct {

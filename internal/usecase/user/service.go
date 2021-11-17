@@ -91,7 +91,6 @@ func (s *Service) Login(username string, password string) (string, string, bool,
 	if err != nil {
 		return username, "", false, err
 	}
-
 	if u == nil {
 		return username, "", false, errors.New("Username/Password wrong")
 	}

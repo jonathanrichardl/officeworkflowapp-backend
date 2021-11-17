@@ -20,7 +20,7 @@ func NewService(r Repository) *Service {
 func (s *Service) GetRequirementsbyOrderId(orderID string) ([]*entity.Requirements, error) {
 	return s.repo.GetByOrderID(orderID)
 }
-func (s *Service) CreateRequirement(request string, expectedOutcome string, orderID string, userID *string) (int, error) {
+func (s *Service) CreateRequirement(request string, expectedOutcome string, orderID string) (int, error) {
 	e := entity.NewRequirement(request, expectedOutcome, orderID)
 	return s.repo.Create(e)
 }

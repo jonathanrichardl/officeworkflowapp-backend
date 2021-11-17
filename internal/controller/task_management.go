@@ -9,6 +9,8 @@ import (
 	"order-validation-v2/internal/entity"
 	"sync"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
@@ -73,6 +75,24 @@ func (c *Controller) GetAllAssignedTasks(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error retrieving all tasks: ", err.Error())
+	}
+	response := models.BuildTasks(tasks)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (c *Controller) GetTasksOfUser(w http.ResponseWriter, r *http.Request) {
+	request := mux.Vars(r)
+	userID := request["id"]
+	tasks, err := c.task.GetTasksofUser(userID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while getting tasks: ", err.Error())
+		return
+	}
+	if tasks == nil {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("No Tasks Present"))
+		return
 	}
 	response := models.BuildTasks(tasks)
 	json.NewEncoder(w).Encode(response)

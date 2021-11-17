@@ -13,8 +13,6 @@ github.com/gorilla/context
 # github.com/gorilla/mux v1.6.2
 ## explicit
 github.com/gorilla/mux
-# github.com/lib/pq v1.10.3
-## explicit
 # github.com/rs/cors v1.8.0
 ## explicit
 github.com/rs/cors

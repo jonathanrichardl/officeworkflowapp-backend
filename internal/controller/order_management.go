@@ -81,7 +81,7 @@ func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 	for _, requirement := range order.Requirements {
 		wg.Add(1)
 		go func(wg sync.WaitGroup, requirement models.Requirements) {
-			_, err := c.requirements.CreateRequirement(requirement.Request, requirement.ExpectedOutcome, id, &requirement.UserID)
+			_, err := c.requirements.CreateRequirement(requirement.Request, requirement.ExpectedOutcome, id)
 			if err != nil {
 				c.logger.ErrorLogger.Println("Can't add requirements into database : ", err.Error())
 				wg.Done()

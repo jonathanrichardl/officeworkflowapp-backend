@@ -131,7 +131,7 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, users.username, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
-								INNER JOIN users on users.id = tasks.userid
+								INNER JOIN users on users.id = tasks.user_id
 								INNER JOIN orders ON requirements.order_id = orders.id `)
 	if err != nil {
 		return nil, err

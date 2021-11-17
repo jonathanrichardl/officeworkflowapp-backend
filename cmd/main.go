@@ -10,34 +10,35 @@ import (
 	"order-validation-v2/internal/usecase/tasks"
 	"order-validation-v2/internal/usecase/user"
 	"order-validation-v2/pkg/logger"
+	"os"
 
-	//_ "github.com/lib/pq"
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
+	//_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
 	logger := logger.NewLogger()
 
-	/*
-		db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-		if err != nil {
-			panic(err)
-		}
-		taskRepo := repository.NewTaskPSQL(db)
-		submissionRepo := repository.NewSubmissionPSQL(db)
-		orderRepo := repository.NewOrdersPSQL(db)
-		requirementRepo := repository.NewRequirementsPSQL(db)
-		userRepo := repository.NewUserPSQL(db)
-	*/
-	db, err := sql.Open("mysql", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
 	}
-	taskRepo := repository.NewTaskMySQL(db)
-	submissionRepo := repository.NewSubmissionMySQL(db)
-	orderRepo := repository.NewOrdersMySQL(db)
-	requirementRepo := repository.NewRequirementsMySQL(db)
-	userRepo := repository.NewUserMySQL(db)
+	taskRepo := repository.NewTaskPSQL(db)
+	submissionRepo := repository.NewSubmissionPSQL(db)
+	orderRepo := repository.NewOrdersPSQL(db)
+	requirementRepo := repository.NewRequirementsPSQL(db)
+	userRepo := repository.NewUserPSQL(db)
+	/*
+		db, err := sql.Open("mysql", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
+		if err != nil {
+			panic(err)
+		}
+		taskRepo := repository.NewTaskMySQL(db)
+		submissionRepo := repository.NewSubmissionMySQL(db)
+		orderRepo := repository.NewOrdersMySQL(db)
+		requirementRepo := repository.NewRequirementsMySQL(db)
+		userRepo := repository.NewUserMySQL(db)
+	*/
 	orderService := orders.NewService(orderRepo)
 	requirementService := requirements.NewService(requirementRepo)
 	userService := user.NewService(userRepo)
