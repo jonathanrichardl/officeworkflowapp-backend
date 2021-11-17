@@ -18,7 +18,7 @@ func NewUserPSQL(db *sql.DB) *UserPSQL {
 
 func (r *UserPSQL) Create(u *entity.User) (string, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO users (id, username, email, pswd, userrole) 
+		INSERT INTO users (id, username, email, pswd, user_role) 
 		values($1, $2, $3, sha256($4), $5)`)
 	if err != nil {
 		return u.ID, err
@@ -41,7 +41,7 @@ func (r *UserPSQL) Create(u *entity.User) (string, error) {
 }
 
 func (r *UserPSQL) GetbyUsername(username string) (*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT id, username, email, pswd, userrole from users where username = $1`)
+	stmt, err := r.db.Prepare(`SELECT id, username, email, pswd, user_role from users where username = $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (r *UserPSQL) GetbyUsername(username string) (*entity.User, error) {
 }
 
 func (r *UserPSQL) GetbyID(ID string) (*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT id, username, email, userrole from users where ID = $1`)
+	stmt, err := r.db.Prepare(`SELECT id, username, email, user_role from users where ID = $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -69,7 +69,7 @@ func (r *UserPSQL) GetbyID(ID string) (*entity.User, error) {
 }
 
 func (r *UserPSQL) Update(u *entity.User) error {
-	_, err := r.db.Exec("UPDATE users SET pswd = sha256($1),  username = $2, email = $3, userrole = $4 where id = $5",
+	_, err := r.db.Exec("UPDATE users SET pswd = sha256($1),  username = $2, email = $3, user_role = $4 where id = $5",
 		u.Password, u.Username, u.Email, u.UserRole, u.Username)
 	if err != nil {
 		return err
@@ -78,7 +78,7 @@ func (r *UserPSQL) Update(u *entity.User) error {
 }
 
 func (r *UserPSQL) Search(query string) ([]*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT id, username, email, userrole FROM users WHERE username like $1`)
+	stmt, err := r.db.Prepare(`SELECT id, username, email, user_role FROM users WHERE username like $1`)
 	if err != nil {
 		return nil, err
 	}
@@ -100,7 +100,7 @@ func (r *UserPSQL) Search(query string) ([]*entity.User, error) {
 }
 
 func (r *UserPSQL) List() ([]*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT ID, username, email, userrole FROM users`)
+	stmt, err := r.db.Prepare(`SELECT ID, username, email, user_role FROM users`)
 	if err != nil {
 		return nil, err
 	}
