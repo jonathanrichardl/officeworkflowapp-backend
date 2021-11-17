@@ -2,8 +2,9 @@ package models
 
 import "order-validation-v2/internal/entity"
 
-type Tasks struct {
+type TaskWithDetail struct {
 	Id               string        `json:"id"`
+	User             string        `json:"assigned_user,omitempty"`
 	Request          string        `json:"task"`
 	ExpectedOutcome  string        `json:"outcome"`
 	Status           entity.Status `json:"status"`
@@ -13,15 +14,24 @@ type Tasks struct {
 }
 
 type NewTask struct {
-	RequirementID int    `json:"requirement_id"`
-	UserID        string `json:"user_id"`
+	Num           string   `json:"num,omitempty"`
+	RequirementID int      `json:"requirement_id"`
+	Note          string   `json:"note"`
+	UserID        string   `json:"user_id"`
+	Prerequisite  []string `json:"prerequisite"`
+	Deadline      string   `json:"deadline"`
 }
 
-func BuildTasks(T []*entity.Task) []*Tasks {
-	var tasks []*Tasks
+type BulkAddedTasks struct {
+	Tasks []NewTask `json:"tasks"`
+}
+
+func BuildTasks(T []*entity.TaskWithDetails) []*TaskWithDetail {
+	var tasks []*TaskWithDetail
 	for _, t := range T {
-		task := Tasks{
+		task := TaskWithDetail{
 			Id:               t.ID,
+			User:             t.Username,
 			ExpectedOutcome:  t.ExpectedOutcome,
 			Request:          t.Request,
 			Status:           t.Status,

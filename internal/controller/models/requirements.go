@@ -1,12 +1,14 @@
 package models
 
+import "order-validation-v2/internal/entity"
+
 type Requirements struct {
-	Id              int    `json:"id,omitempty"`
-	Request         string `json:"request"`
-	ExpectedOutcome string `json:"outcome"`
-	Status          bool   `json:"status"`
-	OrderID         string `json:"order_id,omitempty"`
-	UserID          string `json:"user_id"`
+	Id              int           `json:"id,omitempty"`
+	Request         string        `json:"request"`
+	ExpectedOutcome string        `json:"outcome"`
+	Status          entity.Status `json:"status"`
+	OrderID         string        `json:"order_id,omitempty"`
+	UserID          string        `json:"user_id"`
 }
 
 type RequirementPatch struct {

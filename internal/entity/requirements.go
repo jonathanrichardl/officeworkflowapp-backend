@@ -1,11 +1,18 @@
 package entity
 
+const (
+	NotAssigned Status = iota
+	Assigned
+	AssignedAndFinished
+)
+
 type Requirements struct {
 	Id              int
 	Request         string
 	ExpectedOutcome string
 	OrderID         string
-	Status          bool
+	Status          Status
+	TaskID          string
 }
 
 func NewRequirement(request string, expectedOutcome string, orderID string) *Requirements {
@@ -18,7 +25,11 @@ func NewRequirement(request string, expectedOutcome string, orderID string) *Req
 
 }
 
-func (r *Requirements) SetStatus(newStatus bool) {
-	r.Status = newStatus
+func (r *Requirements) Assign(taskID string) {
+	r.TaskID = taskID
+	r.setStatus(1)
 
+}
+func (r *Requirements) setStatus(newStatus Status) {
+	r.Status = newStatus
 }

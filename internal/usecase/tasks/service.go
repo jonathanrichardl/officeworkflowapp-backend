@@ -1,6 +1,9 @@
 package tasks
 
-import "order-validation-v2/internal/entity"
+import (
+	"order-validation-v2/internal/entity"
+	"time"
+)
 
 type Service struct {
 	repo Repository
@@ -12,11 +15,11 @@ func NewService(r Repository) *Service {
 	}
 }
 
-func (s *Service) ListAllTasks() ([]*entity.Task, error) {
+func (s *Service) ListAllTasks() ([]*entity.TaskWithDetails, error) {
 	return s.repo.List()
 }
 
-func (s *Service) GetTasksofUser(userID string) ([]*entity.Task, error) {
+func (s *Service) GetTasksofUser(userID string) ([]*entity.TaskWithDetails, error) {
 	return s.repo.GetbyUserID(userID)
 
 }
@@ -33,7 +36,15 @@ func (s *Service) DeleteTask(id string) error {
 	return s.repo.Delete(id)
 }
 
-func (s *Service) CreateTask(requirementID int, userID string) (string, error) {
-	task := entity.NewTask(requirementID, userID)
+func (s *Service) CreateTask(requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error) {
+	task := entity.NewTask(requirementID, userID, Note, prerequisiteTaskID, Deadline)
 	return s.repo.Create(task)
+}
+
+func (s *Service) SaveTask(task *entity.Task) (string, error) {
+	return s.repo.Create(task)
+}
+
+func (s *Service) RemovePrerequisite(prerequisiteID string) ([]*entity.Task, error) {
+	return s.repo.RemovePrerequisite(prerequisiteID)
 }

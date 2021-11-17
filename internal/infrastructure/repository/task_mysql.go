@@ -5,20 +5,20 @@ import (
 	"order-validation-v2/internal/entity"
 )
 
-type TaskPSQL struct {
+type TaskMySQL struct {
 	db *sql.DB
 }
 
-func NewTaskPSQL(db *sql.DB) *TaskPSQL {
+func NewTaskMySQL(db *sql.DB) *TaskPSQL {
 	return &TaskPSQL{
 		db: db,
 	}
 }
 
-func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
+func (r *TaskMySQL) Create(t *entity.Task) (string, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO tasks (ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite) 
-		values($1,$2,$3,$4,$5,$6,$7,$8)`)
+		values(?,?,?,?,?,?,?,?)`)
 
 	if err != nil {
 		return t.ID, err
@@ -41,10 +41,10 @@ func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 
 }
 
-func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
+func (r *TaskMySQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.allowed, tasks.user_id, tasks.fulfillment_status, tasks.num_of_prerequisite, tasks.deadline
-							  	FROM prerequisite INNER JOIN tasks on tasks.id = prerequisite.task_id
-								 WHERE prerequisite = '$1"`)
+								FROM prerequisite INNER JOIN tasks on tasks.id = prerequisite.task_id
+								 WHERE prerequisite = ?"`)
 
 	if err != nil {
 		return nil, err
@@ -64,15 +64,16 @@ func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 		}
 		affectedTasks = append(affectedTasks, &t)
 	}
-	_, err = r.db.Exec("DELETE FROM prerequisite WHERE prerequisite='$1'", taskID)
+	_, err = r.db.Exec("DELETE FROM prerequisite WHERE prerequisite=?", taskID)
 	if err != nil {
 		return nil, err
 	}
 	return affectedTasks, nil
 }
-func (r *TaskPSQL) Get(id string) (*entity.Task, error) {
+
+func (r *TaskMySQL) Get(id string) (*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT id, requirement_id, allowed, user_id, fulfillment_status, num_of_prerequisite, deadline 
-								from tasks where id = $1`)
+								from tasks where id = ?`)
 	var task entity.Task
 	if err != nil {
 		return nil, err
@@ -90,12 +91,12 @@ func (r *TaskPSQL) Get(id string) (*entity.Task, error) {
 
 }
 
-func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error) {
+func (r *TaskMySQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline,tasks.fulfillment_status
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN orders ON requirements.order_id = orders.id 
-								where user_id = $1 and tasks.allowed = true`)
+								where user_id = ? and tasks.allowed = true`)
 	if err != nil {
 		return nil, err
 	}
@@ -117,9 +118,9 @@ func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 	return tasks, nil
 
 }
-func (r *TaskPSQL) Update(e *entity.Task) error {
-	_, err := r.db.Exec(`UPDATE tasks SET user_id = $1, fulfillment_status = $2, deadline = $3, num_of_prerequisite = $4,
-						 allowed = '$5', where id = $6`,
+func (r *TaskMySQL) Update(e *entity.Task) error {
+	_, err := r.db.Exec(`UPDATE tasks SET user_id = ?, fulfillment_status = ?, deadline = ?, num_of_prerequisite = ?,
+						 allowed = ?, where id = ?`,
 		e.UserID, e.Status, e.Deadline, e.NumOfPrerequisite, e.Allowed, e.ID)
 	if err != nil {
 		return err
@@ -127,7 +128,7 @@ func (r *TaskPSQL) Update(e *entity.Task) error {
 	return nil
 }
 
-func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
+func (r *TaskMySQL) List() ([]*entity.TaskWithDetails, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, users.username, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
@@ -158,8 +159,8 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 
 }
 
-func (r *TaskPSQL) Delete(TaskID string) error {
-	_, err := r.db.Exec("DELETE FROM task where requirement_id = $1", TaskID)
+func (r *TaskMySQL) Delete(TaskID string) error {
+	_, err := r.db.Exec("DELETE FROM task where requirement_id = ?", TaskID)
 	if err != nil {
 		return err
 	}

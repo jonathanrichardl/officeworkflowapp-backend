@@ -45,8 +45,9 @@ func (c *Controller) RegisterHandler() {
 
 	admin := c.router.PathPrefix("/admin").Subrouter()
 	admin.Use(c.validateAdminJWT)
-	admin.HandleFunc("/orders", c.GetStatusOfAllOrders).Methods("GET")
+	admin.HandleFunc("/orders", c.GetAllUncompletedOrders).Methods("GET")
 	admin.HandleFunc("/orders", c.AddNewOrder).Methods("POST")
+
 	admin.HandleFunc("/orders/id={id}", c.GetStatusOfOrder).Methods("GET")
 	admin.HandleFunc("/orders/id={id}", c.DeleteOrder).Methods("DELETE")
 	admin.HandleFunc("/orders/id={id}", c.ModifyRequirements).Methods("PATCH")
@@ -54,6 +55,8 @@ func (c *Controller) RegisterHandler() {
 	admin.HandleFunc("/user", c.NewUser).Methods("POST")
 	admin.HandleFunc("/user", c.GetAllUsers).Methods("GET")
 	admin.HandleFunc("/tasks", c.AddNewTask).Methods("POST")
+	admin.HandleFunc("/tasks/bulk", c.BulkAssignTasks).Methods("POST")
+	admin.HandleFunc("/tasks", c.GetAllAssignedTasks).Methods("GET")
 }
 
 func (c *Controller) Start() {
