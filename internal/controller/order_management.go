@@ -7,38 +7,13 @@ import (
 	"net/http"
 	"order-validation-v2/internal/controller/models"
 	"order-validation-v2/internal/entity"
+	"sync"
 	"time"
 
 	"github.com/gorilla/mux"
 )
 
-func (c *Controller) NewUser(w http.ResponseWriter, r *http.Request) {
-	var newUser models.NewUser
-	req, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Invalid Request"))
-		c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
-		return
-	}
-	err = json.Unmarshal(req, &newUser)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Invalid Request"))
-		c.logger.ErrorLogger.Println("Invalid Request, Can't unmarshal :", err.Error())
-		return
-	}
-	id, err := c.user.CreateUser(newUser.Username, newUser.Email, newUser.Password, newUser.Role)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		c.logger.ErrorLogger.Println("Error while creating new user: ", err.Error())
-		return
-	}
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(fmt.Sprintf("User %s has been added with id %s\n", newUser.Username, id)))
-}
-
-func (c *Controller) GetStatusOfAllOrders(w http.ResponseWriter, r *http.Request) {
+func (c *Controller) GetAllUncompletedOrders(w http.ResponseWriter, r *http.Request) {
 	orders, err := c.order.ListOrders()
 	if err != nil {
 		c.logger.ErrorLogger.Println("Error retrieving orders from database: ", err.Error())
@@ -101,25 +76,27 @@ func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Invalid Request"))
 		c.logger.ErrorLogger.Println("Can't add new order into database : ", err.Error())
 	}
+	var wg sync.WaitGroup
+
 	for _, requirement := range order.Requirements {
-		fmt.Println(requirement.UserID)
-		_, err := c.requirements.CreateRequirement(requirement.Request, requirement.ExpectedOutcome, id, &requirement.UserID)
-		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("Invalid Request"))
-			c.logger.ErrorLogger.Println("Can't add requirements into database : ", err.Error())
-			return
-
-		}
-
+		wg.Add(1)
+		go func(wg sync.WaitGroup, requirement models.Requirements) {
+			_, err := c.requirements.CreateRequirement(requirement.Request, requirement.ExpectedOutcome, id)
+			if err != nil {
+				c.logger.ErrorLogger.Println("Can't add requirements into database : ", err.Error())
+				wg.Done()
+				return
+			}
+			wg.Done()
+		}(wg, requirement)
 	}
+	wg.Wait()
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(fmt.Sprintf("201 - Order '%s' has been added, keep track on your order here at /orders/id=%s", order.Title, id)))
 
 }
 
 func (c *Controller) GetStatusOfOrder(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
 	request := mux.Vars(r)
 	uuid := request["id"]
 	order, err := c.order.GetOrder(uuid)
@@ -174,7 +151,6 @@ func (c *Controller) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) {
 	request := mux.Vars(r)
 	_ = request["id"]
-	w.Header().Set("Content-Type", "application/json")
 	var patches models.RequirementPatch
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -205,43 +181,4 @@ func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 
-}
-
-func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
-	var newTask models.NewTask
-	req, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Invalid Request"))
-		return
-	}
-	err = json.Unmarshal(req, &newTask)
-	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		w.Write([]byte("Invalid Request"))
-		return
-	}
-	id, err := c.task.CreateTask(newTask.RequirementID, newTask.UserID)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		c.logger.ErrorLogger.Println("Error creating new task: ", err.Error())
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
-	w.Write([]byte(fmt.Sprintf("Task %s has been created for user %s\n", id, newTask.UserID)))
-}
-
-func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := c.user.ListUsers()
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		c.logger.ErrorLogger.Println("Error retrieving all user: ", err.Error())
-		return
-	}
-	var response []models.RetrievedUser
-	for _, user := range users {
-		response = append(response, models.BuildUserProfile(user))
-	}
-	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(response)
 }

@@ -1,5 +1,9 @@
 package entity
 
+import (
+	"time"
+)
+
 type Status int8
 
 const (
@@ -9,7 +13,21 @@ const (
 )
 
 type Task struct {
+	ID                string
+	Note              string
+	RequirementID     int
+	UserID            string
+	Status            Status
+	NumOfPrerequisite uint8
+	Prerequisites     []string
+	Allowed           bool
+	Deadline          time.Time
+}
+
+type TaskWithDetails struct {
 	ID               string
+	Username         string
+	Note             string
 	RequirementID    int
 	Request          string
 	ExpectedOutcome  string
@@ -18,19 +36,36 @@ type Task struct {
 	OrderTitle       string
 	OrderDescription string
 	OrderDeadline    string
-	SubmissionID     string
-	SubmissionTime   string
 }
 
-func NewTask(requirementID int, userID string) *Task {
-	return &Task{
-		ID:            NewUUID().String(),
-		RequirementID: requirementID,
-		UserID:        userID,
-		Status:        0,
+func NewTask(requirementID int, userID string, note string, prerequisiteTaskID []string, deadline time.Time) *Task {
+	taskID := NewUUID().String()
+	task := Task{
+		ID:                taskID,
+		RequirementID:     requirementID,
+		UserID:            userID,
+		Note:              note,
+		Allowed:           true,
+		Deadline:          deadline,
+		NumOfPrerequisite: 0,
+		Status:            0,
 	}
+	if totalPrerequisite := len(prerequisiteTaskID); totalPrerequisite != 0 {
+		task.Allowed = false
+		task.NumOfPrerequisite = uint8(totalPrerequisite)
+		task.Prerequisites = prerequisiteTaskID
+	}
+	return &task
 }
 
-func (t *Task) Submit(submissionID string) {
-	t.SubmissionID = submissionID
+func (t *Task) SetStatus(newStatus Status) {
+	t.Status = newStatus
+}
+
+func (t *Task) ReducePrerequisite() {
+	t.NumOfPrerequisite--
+}
+
+func (t *Task) Allow() {
+	t.Allowed = true
 }

@@ -29,9 +29,9 @@ CREATE TABLE orders(
 CREATE TABLE users(
 	id varchar(37) PRIMARY KEY,
     username varchar(50),
-    pswd varchar (258),
+    pswd varchar (256),
     email varchar(30),
-    userrole varchar(7)
+    user_role varchar(7)
 );
 CREATE TABLE requirements(
     id SERIAL PRIMARY KEY,
@@ -47,8 +47,17 @@ CREATE TABLE tasks(
 	user_id varchar(37),
 	requirement_id int,
     fulfillment_status smallint,
+    note varchar(200),
+    allowed bool,
+    num_of_prerequisite int,
+    deadline datetime,
     FOREIGN KEY (requirement_id) REFERENCES requirements(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE prerequisite(
+	task_id varchar(37),
+    prerequisite varchar(37)
 );
 
 CREATE TABLE submissions(
@@ -75,7 +84,4 @@ INSERT INTO users
 (id, username, pswd, email, user_role)
 VALUES ('10b16316-ec54-4fdf-9a30-8deded11f633', 'jorich', sha256('100300'), 'jorich@elloy.com', 'User');
 
-INSERT INTO users 
-(id, username, pswd, email, user_role)
-VALUES ('1241241', 'ervin', sha256('100300'), 'ervin@ymail.com', 'User');
 

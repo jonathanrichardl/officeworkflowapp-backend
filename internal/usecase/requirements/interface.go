@@ -31,7 +31,7 @@ type UseCase interface {
 	GetRequirementsbyOrderId(orderID string) ([]*entity.Requirements, error)
 	SearchRequirements(query string) ([]*entity.Requirements, error)
 	ListRequirements() ([]*entity.Requirements, error)
-	CreateRequirement(request string, expectedOutcome string, orderID string, userID *string) (int, error)
+	CreateRequirement(request string, expectedOutcome string, orderID string) (int, error)
 	UpdateRequirement(e *entity.Requirements) error
 	DeleteRequirement(id int) error
 }
