@@ -37,7 +37,6 @@ func (s *Service) GetOrder(id string) (*entity.Orders, error) {
 	return o, nil
 }
 
-//SearchBooks search books
 func (s *Service) SearchOrders(query string) ([]*entity.Orders, error) {
 	orders, err := s.repo.Search(strings.ToLower(query))
 	if err != nil {
@@ -49,7 +48,6 @@ func (s *Service) SearchOrders(query string) ([]*entity.Orders, error) {
 	return orders, nil
 }
 
-//ListBooks list books
 func (s *Service) ListOrders() ([]*entity.Orders, error) {
 	orders, err := s.repo.List()
 	if err != nil {
@@ -61,7 +59,6 @@ func (s *Service) ListOrders() ([]*entity.Orders, error) {
 	return orders, nil
 }
 
-//DeleteBook Delete a book
 func (s *Service) DeleteOrder(id string) error {
 	_, err := s.GetOrder(id)
 	if err != nil {
@@ -70,7 +67,6 @@ func (s *Service) DeleteOrder(id string) error {
 	return s.repo.Delete(id)
 }
 
-//UpdateBook Update a book
 func (s *Service) UpdateOrder(o *entity.Orders) error {
 	return s.repo.Update(o)
 }

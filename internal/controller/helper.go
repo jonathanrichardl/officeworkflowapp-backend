@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-func (c *Controller) saveSubmission(submission models.Submission, ch chan<- string, wg sync.WaitGroup) {
+func (c *Controller) saveSubmission(submission models.Submission, ch chan<- string, wg *sync.WaitGroup) {
 	image := models.DecodeSubmissionPayload(submission)
 	id, err := c.submissions.NewSubmission(submission.Message, image, submission.TaskID)
 	if err != nil {
@@ -18,7 +18,7 @@ func (c *Controller) saveSubmission(submission models.Submission, ch chan<- stri
 	wg.Done()
 }
 
-func (c *Controller) updateTaskStatus(task *entity.Task, wg sync.WaitGroup) {
+func (c *Controller) updateTaskStatus(task *entity.Task, wg *sync.WaitGroup) {
 	task.Status = 1
 	err := c.task.UpdateTask(task)
 	if err != nil {
@@ -30,7 +30,7 @@ func (c *Controller) updateTaskStatus(task *entity.Task, wg sync.WaitGroup) {
 
 }
 
-func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg sync.WaitGroup) {
+func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg *sync.WaitGroup) {
 	affectedTasks, err := c.task.RemovePrerequisite(prerequisiteTaskID)
 	if err != nil {
 		c.logger.ErrorLogger.Println("Error while deleting"+prerequisiteTaskID+"From prerequisite: ", err.Error())
@@ -40,13 +40,13 @@ func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg sync.WaitG
 	var wg2 sync.WaitGroup
 	for _, task := range affectedTasks {
 		wg2.Add(1)
-		go c.updateAffectedTasks(task, wg2)
+		go c.updateAffectedTasks(task, &wg2)
 	}
 	wg2.Wait()
 	wg.Done()
 }
 
-func (c *Controller) updateAffectedTasks(affectedTask *entity.Task, wg sync.WaitGroup) {
+func (c *Controller) updateAffectedTasks(affectedTask *entity.Task, wg *sync.WaitGroup) {
 	affectedTask.ReducePrerequisite()
 	if affectedTask.NumOfPrerequisite == 0 {
 		affectedTask.Allow()
@@ -59,7 +59,7 @@ func (c *Controller) updateAffectedTasks(affectedTask *entity.Task, wg sync.Wait
 	wg.Done()
 }
 
-func (c *Controller) assignPrerequiste(task *entity.Task, assignedID map[string]string, wg sync.WaitGroup) {
+func (c *Controller) assignPrerequiste(task *entity.Task, assignedID map[string]string, wg *sync.WaitGroup) {
 	for count, prerequiste := range task.Prerequisites {
 		task.Prerequisites[count] = assignedID[prerequiste]
 	}
