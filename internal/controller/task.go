@@ -69,9 +69,9 @@ func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
 	var ch chan (string)
 	var wg sync.WaitGroup
 	wg.Add(3)
-	go c.saveSubmission(submission, ch, wg)
-	go c.updateTaskStatus(task, wg)
-	go c.deletePrerequisite(task.ID, wg)
+	go c.saveSubmission(submission, ch, &wg)
+	go c.updateTaskStatus(task, &wg)
+	go c.deletePrerequisite(task.ID, &wg)
 	id := <-ch
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("Submission has been accepted, id = %s", id)))

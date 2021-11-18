@@ -40,7 +40,7 @@ func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	for _, task := range tasks {
 		wg.Add(1)
-		go c.assignPrerequiste(task, assignedID, wg)
+		go c.assignPrerequiste(task, assignedID, &wg)
 	}
 	wg.Wait()
 
