@@ -50,7 +50,7 @@ CREATE TABLE tasks(
     note varchar(200),
     allowed bool,
     num_of_prerequisite int,
-    deadline datetime,
+    deadline timestamp,
     FOREIGN KEY (requirement_id) REFERENCES requirements(id),
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
@@ -77,7 +77,7 @@ CREATE TABLE image_submissions(
 
 
 INSERT INTO users 
-(id, username, pswd, email, userrole)
+(id, username, pswd, email, user_role)
 VALUES ('cd75bf2e-0876-46b4-a7a2-355ba2e8e034', 'elloy', sha256('100300'), 'elloy@elloy.com', 'Admin');
 
 INSERT INTO users 
