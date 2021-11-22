@@ -20,6 +20,7 @@ func NewRequirement(request string, expectedOutcome string, orderID string) *Req
 		Request:         request,
 		ExpectedOutcome: expectedOutcome,
 		OrderID:         orderID,
+		Status:          0,
 	}
 	return r
 
