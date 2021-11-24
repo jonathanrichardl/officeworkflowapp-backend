@@ -65,6 +65,24 @@ func (r *SubmissionPSQL) Create(e *entity.Submission) (string, error) {
 	return e.ID, nil
 }
 
+func (r *SubmissionPSQL) Get(submissionID string) (*entity.Submission, error) {
+	statement, err := r.db.Prepare(`SELECT submit_time, message, task_id FROM submissions where id = $1`)
+	if err != nil {
+		return nil, err
+	}
+	var submission entity.Submission
+	row := statement.QueryRow(submissionID)
+	if err != nil {
+		return nil, err
+	}
+	err = row.Scan(&submission.SubmissionTime, &submission.Message, &submission.TaskID)
+	if err != nil {
+		return nil, err
+	}
+	return &submission, nil
+
+}
+
 func (r *SubmissionPSQL) GetByTaskID(taskID string) ([]*entity.Submission, error) {
 	statement, err := r.db.Prepare(`SELECT id, submit_time, message FROM submissions where task_id = $1`)
 	if err != nil {

@@ -28,6 +28,10 @@ func (s *Service) DeleteSubmission(id string) error {
 
 }
 
-func (s *Service) GetSubmission(taskID string) ([]*entity.Submission, error) {
+func (s *Service) GetSubmissionByTaskID(taskID string) ([]*entity.Submission, error) {
 	return s.repo.GetByTaskID(taskID)
+}
+
+func (s *Service) GetSubmission(submissionID string) (*entity.Submission, error) {
+	return s.repo.Get(submissionID)
 }
