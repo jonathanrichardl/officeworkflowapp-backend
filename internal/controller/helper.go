@@ -16,9 +16,13 @@ func (c *Controller) saveSubmission(submission models.Submission, ch chan<- stri
 	wg.Done()
 }
 
-func (c *Controller) updateTaskStatus(task *entity.Task, wg *sync.WaitGroup, status int8) {
+func (c *Controller) updateTaskStatus(taskID string, wg *sync.WaitGroup, status int8) {
+	task, err := c.task.Get(taskID)
+	if err != nil {
+		panic(err)
+	}
 	task.Status = entity.Status(status)
-	err := c.task.UpdateTask(task)
+	err = c.task.UpdateTask(task)
 	if err != nil {
 		panic(err)
 	}

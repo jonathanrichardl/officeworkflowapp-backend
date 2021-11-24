@@ -13,6 +13,41 @@ import (
 	"github.com/gorilla/mux"
 )
 
+func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
+	var reviewForm models.ReviewForm
+	req, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+		c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
+		return
+	}
+	err = json.Unmarshal(req, &reviewForm)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+		c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
+		return
+	}
+	submission, err := c.submissions.GetSubmission(reviewForm.SubmissionID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid SubmissionID"))
+		c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
+		return
+	}
+	var wg sync.WaitGroup
+	if reviewForm.Forwarded == nil {
+		wg.Add(1)
+		if reviewForm.Approved {
+			go c.updateTaskStatus(submission.TaskID, &wg, 2)
+		} else {
+			go c.updateTaskStatus(submission.TaskID, &wg, 2)
+		}
+
+	}
+}
+
 func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
 	var newTasks models.BulkAddedTasks
 	req, err := ioutil.ReadAll(r.Body)
@@ -75,7 +110,7 @@ func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetAllAssignedTasks(w http.ResponseWriter, r *http.Request) {
-	tasks, err := c.task.GetTasksToReview()
+	tasks, err := c.task.ListAllTasks()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error retrieving all tasks: ", err.Error())
@@ -85,7 +120,7 @@ func (c *Controller) GetAllAssignedTasks(w http.ResponseWriter, r *http.Request)
 }
 
 func (c *Controller) GetTaskstoReview(w http.ResponseWriter, r *http.Request) {
-	tasks, err := c.task.ListAllTasks()
+	tasks, err := c.task.GetTasksToReview()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error retrieving all tasks: ", err.Error())

@@ -32,7 +32,7 @@ func (c *Controller) GetTasks(w http.ResponseWriter, r *http.Request) {
 func (c *Controller) GetSubmission(w http.ResponseWriter, r *http.Request) {
 	request := mux.Vars(r)
 	id := request["id"]
-	submission, err := c.submissions.GetSubmission(id)
+	submission, err := c.submissions.GetSubmissionByTaskID(id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error while getting submissions: ", err.Error())
@@ -70,7 +70,7 @@ func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	wg.Add(3)
 	go c.saveSubmission(submission, ch, &wg)
-	go c.updateTaskStatus(task, &wg, 1)
+	go c.updateTaskStatus(task.ID, &wg, 1)
 	go c.deletePrerequisite(task.ID, &wg)
 	id := <-ch
 	w.WriteHeader(http.StatusOK)
