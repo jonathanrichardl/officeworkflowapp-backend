@@ -6,13 +6,12 @@ import (
 	"sync"
 )
 
-func (c *Controller) saveSubmission(submission models.Submission, ch chan<- string, wg *sync.WaitGroup) {
+func (c *Controller) saveSubmission(submission models.Submission, wg *sync.WaitGroup) {
 	image := models.DecodeSubmissionPayload(submission)
-	id, err := c.submissions.NewSubmission(submission.Message, image, submission.TaskID)
+	_, err := c.submissions.NewSubmission(submission.Message, image, submission.TaskID)
 	if err != nil {
 		panic(err)
 	}
-	ch <- id
 	wg.Done()
 }
 
