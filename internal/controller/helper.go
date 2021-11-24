@@ -10,32 +10,35 @@ func (c *Controller) saveSubmission(submission models.Submission, ch chan<- stri
 	image := models.DecodeSubmissionPayload(submission)
 	id, err := c.submissions.NewSubmission(submission.Message, image, submission.TaskID)
 	if err != nil {
-		c.logger.ErrorLogger.Println("Error while adding submission: ", err.Error())
-		wg.Done()
-		return
+		panic(err)
 	}
 	ch <- id
 	wg.Done()
 }
 
-func (c *Controller) updateTaskStatus(task *entity.Task, wg *sync.WaitGroup) {
-	task.Status = 1
+func (c *Controller) updateTaskStatus(task *entity.Task, wg *sync.WaitGroup, status int8) {
+	task.Status = entity.Status(status)
 	err := c.task.UpdateTask(task)
 	if err != nil {
-		c.logger.ErrorLogger.Println("Error while updating task: ", err.Error())
-		wg.Done()
-		return
+		panic(err)
 	}
 	wg.Done()
 
 }
 
+func (c *Controller) updateRequirementStatus(requirementID int, wg *sync.WaitGroup, status int8) {
+	req, err := c.requirements.GetRequirementbyID(requirementID)
+	if err != nil {
+		panic(err)
+	}
+	req.SetStatus(status)
+	c.requirements.UpdateRequirement(req)
+}
+
 func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg *sync.WaitGroup) {
 	affectedTasks, err := c.task.RemovePrerequisite(prerequisiteTaskID)
 	if err != nil {
-		c.logger.ErrorLogger.Println("Error while deleting"+prerequisiteTaskID+"From prerequisite: ", err.Error())
-		wg.Done()
-		return
+		panic(err)
 	}
 	var wg2 sync.WaitGroup
 	for _, task := range affectedTasks {
@@ -53,8 +56,7 @@ func (c *Controller) updateAffectedTasks(affectedTask *entity.Task, wg *sync.Wai
 	}
 	err := c.task.UpdateTask(affectedTask)
 	if err != nil {
-		c.logger.ErrorLogger.Println("Can't Update affected task : ", err.Error())
-		return
+		panic(err)
 	}
 	wg.Done()
 }

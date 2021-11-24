@@ -9,6 +9,7 @@ type Reader interface {
 	Get(id string) (*entity.Task, error)
 	GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 	List() ([]*entity.TaskWithDetails, error)
+	GetTasksToReview() ([]*entity.TaskWithDetails, error)
 }
 
 type Writer interface {
@@ -32,4 +33,5 @@ type UseCase interface {
 	CreateTask(requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error)
 	RemovePrerequisite(prerequisiteTaskID string) ([]*entity.Task, error)
 	SaveTask(t *entity.Task) (string, error)
+	GetTasksToReview() ([]*entity.TaskWithDetails, error)
 }

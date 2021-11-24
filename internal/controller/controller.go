@@ -58,6 +58,8 @@ func (c *Controller) RegisterHandler() {
 	admin.HandleFunc("/tasks", c.AddNewTask).Methods("POST")
 	admin.HandleFunc("/tasks/bulk", c.BulkAssignTasks).Methods("POST")
 	admin.HandleFunc("/tasks", c.GetAllAssignedTasks).Methods("GET")
+	admin.HandleFunc("/tasks/submitted", c.GetTaskstoReview).Methods("GET")
+
 }
 
 func (c *Controller) Start() {

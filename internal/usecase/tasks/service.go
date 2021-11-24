@@ -48,3 +48,7 @@ func (s *Service) SaveTask(task *entity.Task) (string, error) {
 func (s *Service) RemovePrerequisite(prerequisiteID string) ([]*entity.Task, error) {
 	return s.repo.RemovePrerequisite(prerequisiteID)
 }
+
+func (s *Service) GetTasksToReview() ([]*entity.TaskWithDetails, error) {
+	return s.repo.GetTasksToReview()
+}
