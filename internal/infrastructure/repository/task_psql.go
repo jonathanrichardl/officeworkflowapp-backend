@@ -44,7 +44,7 @@ func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.allowed, tasks.user_id, tasks.fulfillment_status, tasks.num_of_prerequisite, tasks.deadline
 							  	FROM prerequisite INNER JOIN tasks on tasks.id = prerequisite.task_id
-								 WHERE prerequisite = '$1"`)
+								 WHERE prerequisite = '$1'`)
 
 	if err != nil {
 		return nil, err
