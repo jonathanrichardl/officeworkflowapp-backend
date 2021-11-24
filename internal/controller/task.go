@@ -73,6 +73,7 @@ func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
 	go c.updateTaskStatus(task.ID, &wg, 1)
 	go c.deletePrerequisite(task.ID, &wg)
 	id := <-ch
+	fmt.Println(id)
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("Submission has been accepted, id = %s", id)))
 	wg.Wait()
