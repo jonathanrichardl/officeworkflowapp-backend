@@ -66,11 +66,25 @@ func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Error creating new task: ", err.Error())
 		return
 	}
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go c.updateRequirementStatus(newTask.RequirementID, &wg, 1)
 	w.WriteHeader(http.StatusCreated)
 	w.Write([]byte(fmt.Sprintf("Task %s has been created for user %s\n", id, newTask.UserID)))
+	wg.Wait()
 }
 
 func (c *Controller) GetAllAssignedTasks(w http.ResponseWriter, r *http.Request) {
+	tasks, err := c.task.GetTasksToReview()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error retrieving all tasks: ", err.Error())
+	}
+	response := models.BuildTasks(tasks)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (c *Controller) GetTaskstoReview(w http.ResponseWriter, r *http.Request) {
 	tasks, err := c.task.ListAllTasks()
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

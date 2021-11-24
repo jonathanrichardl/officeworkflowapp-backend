@@ -159,6 +159,38 @@ func (r *TaskMySQL) List() ([]*entity.TaskWithDetails, error) {
 
 }
 
+func (r *TaskMySQL) GetTasksToReview() ([]*entity.TaskWithDetails, error) {
+	stmt, err := r.db.Prepare(`SELECT tasks.id, users.username, requirements.request, requirements.expected_outcome,  
+								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
+								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
+								INNER JOIN users on users.id = tasks.user_id
+								INNER JOIN orders ON requirements.order_id = orders.id 
+								WHERE tasks.fulfillment_status = 1`)
+	if err != nil {
+		return nil, err
+	}
+	var tasks []*entity.TaskWithDetails
+	rows, err := stmt.Query()
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var t entity.TaskWithDetails
+		err = rows.Scan(&t.ID, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
+			&t.Status)
+		if err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, &t)
+	}
+	if len(tasks) == 0 {
+		return nil, nil
+	}
+
+	return tasks, nil
+
+}
+
 func (r *TaskMySQL) Delete(TaskID string) error {
 	_, err := r.db.Exec("DELETE FROM task where requirement_id = ?", TaskID)
 	if err != nil {

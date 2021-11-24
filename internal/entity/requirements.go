@@ -28,9 +28,9 @@ func NewRequirement(request string, expectedOutcome string, orderID string) *Req
 
 func (r *Requirements) Assign(taskID string) {
 	r.TaskID = taskID
-	r.setStatus(1)
+	r.SetStatus(1)
 
 }
-func (r *Requirements) setStatus(newStatus Status) {
-	r.Status = newStatus
+func (r *Requirements) SetStatus(newStatus int8) {
+	r.Status = Status(newStatus)
 }

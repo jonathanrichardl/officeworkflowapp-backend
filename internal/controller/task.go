@@ -70,7 +70,7 @@ func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	wg.Add(3)
 	go c.saveSubmission(submission, ch, &wg)
-	go c.updateTaskStatus(task, &wg)
+	go c.updateTaskStatus(task, &wg, 1)
 	go c.deletePrerequisite(task.ID, &wg)
 	id := <-ch
 	w.WriteHeader(http.StatusOK)
