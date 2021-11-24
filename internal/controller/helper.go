@@ -37,6 +37,7 @@ func (c *Controller) updateRequirementStatus(requirementID int, wg *sync.WaitGro
 	}
 	req.SetStatus(status)
 	c.requirements.UpdateRequirement(req)
+	wg.Done()
 }
 
 func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg *sync.WaitGroup) {
