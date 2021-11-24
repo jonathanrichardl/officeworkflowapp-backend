@@ -44,7 +44,7 @@ func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.allowed, tasks.user_id, tasks.fulfillment_status, tasks.num_of_prerequisite, tasks.deadline
 							  	FROM prerequisite INNER JOIN tasks on tasks.id = prerequisite.task_id
-								 WHERE prerequisite = '$1'`)
+								 WHERE prerequisite = $1`)
 
 	if err != nil {
 		return nil, err
@@ -64,7 +64,7 @@ func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 		}
 		affectedTasks = append(affectedTasks, &t)
 	}
-	_, err = r.db.Exec("DELETE FROM prerequisite WHERE prerequisite='$1'", taskID)
+	_, err = r.db.Exec("DELETE FROM prerequisite WHERE prerequisite=$1", taskID)
 	if err != nil {
 		return nil, err
 	}
@@ -119,7 +119,7 @@ func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 }
 func (r *TaskPSQL) Update(e *entity.Task) error {
 	_, err := r.db.Exec(`UPDATE tasks SET user_id = $1, fulfillment_status = $2, deadline = $3, num_of_prerequisite = $4,
-						 allowed = '$5', where id = $6`,
+						 allowed = $5, where id = $6`,
 		e.UserID, e.Status, e.Deadline, e.NumOfPrerequisite, e.Allowed, e.ID)
 	if err != nil {
 		return err
