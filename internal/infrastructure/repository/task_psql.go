@@ -119,7 +119,7 @@ func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 }
 func (r *TaskPSQL) Update(e *entity.Task) error {
 	_, err := r.db.Exec(`UPDATE tasks SET user_id = $1, fulfillment_status = $2, deadline = $3, num_of_prerequisite = $4,
-						 allowed = $5, where id = $6`,
+						 allowed = $5 where id = $6`,
 		e.UserID, e.Status, e.Deadline, e.NumOfPrerequisite, e.Allowed, e.ID)
 	if err != nil {
 		return err
