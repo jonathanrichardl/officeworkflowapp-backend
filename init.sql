@@ -38,7 +38,7 @@ CREATE TABLE requirements(
     request varchar(50),
     expected_outcome varchar(50),
     order_id varchar(37),
-    status bool,
+    status smallint,
     FOREIGN KEY(order_id) REFERENCES orders(id)
 );
 
