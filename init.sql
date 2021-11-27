@@ -87,6 +87,8 @@ CREATE TABLE image_submissions(
 );
 
 
+
+
 INSERT INTO users 
 (id, username, pswd, email, user_role)
 VALUES ('cd75bf2e-0876-46b4-a7a2-355ba2e8e034', 'elloy', sha256('100300'), 'elloy@elloy.com', 'Admin');

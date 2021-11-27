@@ -37,24 +37,9 @@ func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var wg sync.WaitGroup
-	if len(reviewForm.ForwardTo) == 0 {
-		wg.Add(1)
-		if reviewForm.Approved {
-			go c.updateTaskStatus(submission.TaskID, &wg, 2)
-		} else {
-			go c.updateTaskStatus(submission.TaskID, &wg, 0)
-		}
-	} else {
-		wg.Add(1)
-		if reviewForm.Approved {
-			go c.forward(submission.TaskID, reviewForm.ForwardTo, &wg)
-		} else {
-			w.WriteHeader(http.StatusBadRequest)
-			w.Write([]byte("You can't Forward if you don't approve it yet"))
-			c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
-			return
-		}
-	}
+	wg.Add(1)
+	go c.processReviewForm(submission.TaskID, &wg, reviewForm.Approved, reviewForm.ForwardTo)
+
 }
 
 func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
