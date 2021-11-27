@@ -178,8 +178,7 @@ func (r *TaskPSQL) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, 
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
-			&t.Status)
+		err = rows.Scan(&t.ID, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline)
 		if err != nil {
 			return nil, err
 		}
