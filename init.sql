@@ -45,15 +45,26 @@ CREATE TABLE requirements(
 CREATE TABLE tasks(
 	ID varchar(37) PRIMARY KEY,
 	user_id varchar(37),
+    assigner_id varchar(37),
 	requirement_id int,
     fulfillment_status smallint,
     note varchar(200),
     allowed bool,
     num_of_prerequisite int,
     deadline timestamp,
+    total_reviewer smallint,
     FOREIGN KEY (requirement_id) REFERENCES requirements(id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (assigner_id) REFERENCES users(id)
 );
+
+CREATE TABLE forwarded_review(
+	reviewer_id varchar(37),
+    task_id varchar(37),
+    FOREIGN KEY (reviewer_id) REFERENCES users(id),
+    FOREIGN KEY (task_id) REFERENCES tasks(id)
+);
+
 
 CREATE TABLE prerequisite(
 	task_id varchar(37),
@@ -76,9 +87,7 @@ CREATE TABLE image_submissions(
 );
 
 CREATE TABLE review(
-	id int,
-	image bytea,
-    submission_id varchar(37),
+	
     FOREIGN KEY (submission_id) REFERENCES submissions(id)
 );
 

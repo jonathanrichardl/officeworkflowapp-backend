@@ -37,18 +37,29 @@ func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	var wg sync.WaitGroup
-	if reviewForm.Forwarded == nil {
+	if len(reviewForm.ForwardTo) == 0 {
 		wg.Add(1)
 		if reviewForm.Approved {
 			go c.updateTaskStatus(submission.TaskID, &wg, 2)
 		} else {
-			go c.updateTaskStatus(submission.TaskID, &wg, 2)
+			go c.updateTaskStatus(submission.TaskID, &wg, 0)
 		}
-
+	} else {
+		wg.Add(1)
+		if reviewForm.Approved {
+			go c.forward(submission.TaskID, reviewForm.ForwardTo, &wg)
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("You can't Forward if you don't approve it yet"))
+			c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
+			return
+		}
 	}
 }
 
 func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
+	auth := r.Context().Value(ctxKey{})
+	adminID := fmt.Sprintf("%v", auth)
 	var newTasks models.BulkAddedTasks
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -66,7 +77,7 @@ func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
 	var tasks []*entity.Task
 	for _, task := range newTasks.Tasks {
 		deadline, _ := time.Parse("2/Jan/2006 15:04:05", task.Deadline)
-		t := entity.NewTask(task.RequirementID, task.UserID, task.Note, task.Prerequisite, deadline)
+		t := entity.NewTask(adminID, task.RequirementID, task.UserID, task.Note, task.Prerequisite, deadline)
 		assignedID[task.Num] = t.ID
 		tasks = append(tasks, t)
 	}
@@ -81,6 +92,8 @@ func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
 
 }
 func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
+	auth := r.Context().Value(ctxKey{})
+	adminID := fmt.Sprintf("%v", auth)
 	var newTask models.NewTask
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -95,7 +108,7 @@ func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	deadline, _ := time.Parse("2/Jan/2006 15:04:05", newTask.Deadline)
-	id, err := c.task.CreateTask(newTask.RequirementID, newTask.UserID, newTask.Note, newTask.Prerequisite, deadline)
+	id, err := c.task.CreateTask(adminID, newTask.RequirementID, newTask.UserID, newTask.Note, newTask.Prerequisite, deadline)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error creating new task: ", err.Error())
@@ -120,7 +133,9 @@ func (c *Controller) GetAllAssignedTasks(w http.ResponseWriter, r *http.Request)
 }
 
 func (c *Controller) GetTaskstoReview(w http.ResponseWriter, r *http.Request) {
-	tasks, err := c.task.GetTasksToReview()
+	auth := r.Context().Value(ctxKey{})
+	adminID := fmt.Sprintf("%v", auth)
+	tasks, err := c.task.GetTasksToReview(adminID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error retrieving all tasks: ", err.Error())

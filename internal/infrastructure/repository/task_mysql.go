@@ -17,14 +17,15 @@ func NewTaskMySQL(db *sql.DB) *TaskMySQL {
 
 func (r *TaskMySQL) Create(t *entity.Task) (string, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO tasks (ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite) 
-		values(?,?,?,?,?,?,?,?)`)
+		INSERT INTO tasks (assigner_id, ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite) 
+		values(?,?,?,?,?,?,?,?,?)`)
 
 	if err != nil {
 		return t.ID, err
 	}
 
 	_, err = stmt.Exec(
+		t.AssignerID,
 		t.ID,
 		t.UserID,
 		t.RequirementID,

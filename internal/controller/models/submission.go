@@ -5,7 +5,7 @@ import "order-validation-v2/internal/entity"
 type Submission struct {
 	ID             string  `json:"submission_id"`
 	SubmissionTime string  `json:"submission_time"`
-	TaskID         string  `json:"task_id"`
+	TaskID         string  `json:"task_id,omitempty"`
 	Images         []Image `json:"images"`
 	Message        string  `json:"message"`
 }

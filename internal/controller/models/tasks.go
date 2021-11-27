@@ -3,10 +3,10 @@ package models
 import "order-validation-v2/internal/entity"
 
 type ReviewForm struct {
-	SubmissionID string  `json:"submission_id"`
-	Message      string  `json:"message"`
-	Approved     bool    `json:"approved"`
-	Forwarded    *string `json:"forwarded,omitempty"`
+	SubmissionID string   `json:"submission_id"`
+	Message      string   `json:"message"`
+	Approved     bool     `json:"approved"`
+	ForwardTo    []string `json:"forwarded"`
 }
 
 type TaskWithDetail struct {

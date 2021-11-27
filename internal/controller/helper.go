@@ -72,3 +72,14 @@ func (c *Controller) assignPrerequiste(task *entity.Task, assignedID map[string]
 	c.task.SaveTask(task)
 	wg.Done()
 }
+
+func (c *Controller) forward(taskID string, adminIDs []string, wg *sync.WaitGroup) {
+	for _, id := range adminIDs {
+		err := c.task.AddReviewer(taskID, id)
+		if err != nil {
+			panic(err)
+		}
+	}
+	wg.Done()
+
+}

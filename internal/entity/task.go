@@ -13,6 +13,7 @@ const (
 )
 
 type Task struct {
+	AssignerID        string
 	ID                string
 	Note              string
 	RequirementID     int
@@ -26,6 +27,7 @@ type Task struct {
 
 type TaskWithDetails struct {
 	ID               string
+	AssignedBy       string
 	Username         string
 	Note             string
 	RequirementID    int
@@ -38,9 +40,10 @@ type TaskWithDetails struct {
 	OrderDeadline    string
 }
 
-func NewTask(requirementID int, userID string, note string, prerequisiteTaskID []string, deadline time.Time) *Task {
+func NewTask(assignerID string, requirementID int, userID string, note string, prerequisiteTaskID []string, deadline time.Time) *Task {
 	taskID := NewUUID().String()
 	task := Task{
+		AssignerID:        assignerID,
 		ID:                taskID,
 		RequirementID:     requirementID,
 		UserID:            userID,
