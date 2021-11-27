@@ -14,6 +14,8 @@ import (
 )
 
 func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
+	request := mux.Vars(r)
+	submissionID := request["id"]
 	var reviewForm models.ReviewForm
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -29,7 +31,7 @@ func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Invalid Request: ", err.Error())
 		return
 	}
-	submission, err := c.submissions.GetSubmission(reviewForm.SubmissionID)
+	submission, err := c.submissions.GetSubmission(submissionID)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("Invalid SubmissionID"))
