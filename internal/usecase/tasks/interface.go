@@ -9,7 +9,7 @@ type Reader interface {
 	Get(id string) (*entity.Task, error)
 	GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 	List() ([]*entity.TaskWithDetails, error)
-	GetTasksToReview() ([]*entity.TaskWithDetails, error)
+	GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error)
 }
 
 type Writer interface {
@@ -17,6 +17,7 @@ type Writer interface {
 	Update(t *entity.Task) error
 	Delete(id string) error
 	RemovePrerequisite(prerequisiteID string) ([]*entity.Task, error)
+	AddReviewer(TaskID string, NewReviewerID string) error
 }
 
 type Repository interface {
@@ -30,8 +31,9 @@ type UseCase interface {
 	GetTasksofUser(userID string) ([]*entity.TaskWithDetails, error)
 	UpdateTask(t *entity.Task) error
 	DeleteTask(id string) error
-	CreateTask(requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error)
+	CreateTask(assignerID string, requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error)
 	RemovePrerequisite(prerequisiteTaskID string) ([]*entity.Task, error)
 	SaveTask(t *entity.Task) (string, error)
-	GetTasksToReview() ([]*entity.TaskWithDetails, error)
+	GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error)
+	AddReviewer(TaskID string, NewReviewerID string) error
 }

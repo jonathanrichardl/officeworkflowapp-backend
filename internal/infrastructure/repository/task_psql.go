@@ -17,14 +17,15 @@ func NewTaskPSQL(db *sql.DB) *TaskPSQL {
 
 func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO tasks (ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite) 
-		values($1,$2,$3,$4,$5,$6,$7,$8)`)
+		INSERT INTO tasks (assigner_id, ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite) 
+		values($1,$2,$3,$4,$5,$6,$7,$8, $9)`)
 
 	if err != nil {
 		return t.ID, err
 	}
 
 	_, err = stmt.Exec(
+		t.AssignerID,
 		t.ID,
 		t.UserID,
 		t.RequirementID,
@@ -158,18 +159,19 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 
 }
 
-func (r *TaskPSQL) GetTasksToReview() ([]*entity.TaskWithDetails, error) {
+func (r *TaskPSQL) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, users.username, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
-								INNER JOIN users on users.id = tasks.user_id
+								INNER JOIN users ON users.id = tasks.user_id
+								INNER JOIN forwarded_review ON tasks.id = forwarded_review.task_id
 								INNER JOIN orders ON requirements.order_id = orders.id 
-								WHERE tasks.fulfillment_status = 1`)
+								WHERE tasks.fulfillment_status = 1 and (tasks.assigner_id = $1 or forwarded_review.reviewer_id = $1)`)
 	if err != nil {
 		return nil, err
 	}
 	var tasks []*entity.TaskWithDetails
-	rows, err := stmt.Query()
+	rows, err := stmt.Query(adminID)
 	if err != nil {
 		return nil, err
 	}
@@ -192,6 +194,18 @@ func (r *TaskPSQL) GetTasksToReview() ([]*entity.TaskWithDetails, error) {
 
 func (r *TaskPSQL) Delete(TaskID string) error {
 	_, err := r.db.Exec("DELETE FROM task where requirement_id = $1", TaskID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *TaskPSQL) AddReviewer(TaskID string, NewReviewerID string) error {
+	stmt, err := r.db.Prepare(`INSERT INTO forwarded_review (task_id, forwarded_review.reviewer_id) VALUES ($1,$2)`)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(TaskID, NewReviewerID)
 	if err != nil {
 		return err
 	}

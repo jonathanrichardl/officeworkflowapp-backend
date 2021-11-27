@@ -36,8 +36,8 @@ func (s *Service) DeleteTask(id string) error {
 	return s.repo.Delete(id)
 }
 
-func (s *Service) CreateTask(requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error) {
-	task := entity.NewTask(requirementID, userID, Note, prerequisiteTaskID, Deadline)
+func (s *Service) CreateTask(assignerID string, requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error) {
+	task := entity.NewTask(assignerID, requirementID, userID, Note, prerequisiteTaskID, Deadline)
 	return s.repo.Create(task)
 }
 
@@ -49,6 +49,11 @@ func (s *Service) RemovePrerequisite(prerequisiteID string) ([]*entity.Task, err
 	return s.repo.RemovePrerequisite(prerequisiteID)
 }
 
-func (s *Service) GetTasksToReview() ([]*entity.TaskWithDetails, error) {
-	return s.repo.GetTasksToReview()
+func (s *Service) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error) {
+	return s.repo.GetTasksToReview(adminID)
+}
+
+func (s *Service) AddReviewer(TaskID string, NewReviewerID string) error {
+	return s.repo.AddReviewer(TaskID, NewReviewerID)
+
 }
