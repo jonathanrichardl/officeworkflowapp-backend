@@ -162,10 +162,10 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 
 func (r *TaskPSQL) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, users.username, requirements.request, requirements.expected_outcome,  
-								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
+								orders.title, orders.description, orders.deadline 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN users ON users.id = tasks.user_id
-								INNER JOIN forwarded_review ON tasks.id = forwarded_review.task_id
+								LEFT JOIN forwarded_review ON tasks.id = forwarded_review.task_id
 								INNER JOIN orders ON requirements.order_id = orders.id 
 								WHERE tasks.fulfillment_status = 1 and (tasks.assigner_id = $1 or forwarded_review.reviewer_id = $1)`)
 	if err != nil {
