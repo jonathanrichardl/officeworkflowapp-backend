@@ -86,11 +86,6 @@ CREATE TABLE image_submissions(
     FOREIGN KEY (submission_id) REFERENCES submissions(id)
 );
 
-CREATE TABLE review(
-	
-    FOREIGN KEY (submission_id) REFERENCES submissions(id)
-);
-
 
 INSERT INTO users 
 (id, username, pswd, email, user_role)
