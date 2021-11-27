@@ -17,8 +17,8 @@ func NewTaskMySQL(db *sql.DB) *TaskMySQL {
 
 func (r *TaskMySQL) Create(t *entity.Task) (string, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO tasks (assigner_id, ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite) 
-		values(?,?,?,?,?,?,?,?,?)`)
+		INSERT INTO tasks (assigner_id, ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite, total_reviewer) 
+		values(?,?,?,?,?,?,?,?,?,?)`)
 
 	if err != nil {
 		return t.ID, err
@@ -34,6 +34,7 @@ func (r *TaskMySQL) Create(t *entity.Task) (string, error) {
 		t.Allowed,
 		t.Deadline,
 		t.NumOfPrerequisite,
+		t.NumOfReviewer,
 	)
 	if err != nil {
 		return t.ID, err
@@ -121,8 +122,8 @@ func (r *TaskMySQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error
 }
 func (r *TaskMySQL) Update(e *entity.Task) error {
 	_, err := r.db.Exec(`UPDATE tasks SET user_id = ?, fulfillment_status = ?, deadline = ?, num_of_prerequisite = ?,
-						 allowed = ?, where id = ?`,
-		e.UserID, e.Status, e.Deadline, e.NumOfPrerequisite, e.Allowed, e.ID)
+						 allowed = ?, total_reviewer = ? where id = ?`,
+		e.UserID, e.Status, e.Deadline, e.NumOfPrerequisite, e.Allowed, e.NumOfReviewer, e.ID)
 	if err != nil {
 		return err
 	}

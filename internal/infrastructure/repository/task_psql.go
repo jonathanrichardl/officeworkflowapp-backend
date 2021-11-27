@@ -17,8 +17,8 @@ func NewTaskPSQL(db *sql.DB) *TaskPSQL {
 
 func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 	stmt, err := r.db.Prepare(`
-		INSERT INTO tasks (assigner_id, ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite) 
-		values($1,$2,$3,$4,$5,$6,$7,$8, $9)`)
+		INSERT INTO tasks (assigner_id, ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite, total_reviewer) 
+		values($1,$2,$3,$4,$5,$6,$7,$8, $9, $10)`)
 
 	if err != nil {
 		return t.ID, err
@@ -34,6 +34,7 @@ func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 		t.Allowed,
 		t.Deadline,
 		t.NumOfPrerequisite,
+		t.NumOfReviewer,
 	)
 	if err != nil {
 		return t.ID, err
@@ -120,8 +121,8 @@ func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 }
 func (r *TaskPSQL) Update(e *entity.Task) error {
 	_, err := r.db.Exec(`UPDATE tasks SET user_id = $1, fulfillment_status = $2, deadline = $3, num_of_prerequisite = $4,
-						 allowed = $5 where id = $6`,
-		e.UserID, e.Status, e.Deadline, e.NumOfPrerequisite, e.Allowed, e.ID)
+						 allowed = $5, total_reviewer = $6 where id = $7`,
+		e.UserID, e.Status, e.Deadline, e.NumOfPrerequisite, e.Allowed, e.NumOfReviewer, e.ID)
 	if err != nil {
 		return err
 	}

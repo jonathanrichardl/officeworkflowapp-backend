@@ -21,6 +21,7 @@ type Task struct {
 	Status            Status
 	NumOfPrerequisite uint8
 	Prerequisites     []string
+	NumOfReviewer     uint8
 	Allowed           bool
 	Deadline          time.Time
 }
@@ -50,6 +51,7 @@ func NewTask(assignerID string, requirementID int, userID string, note string, p
 		Note:              note,
 		Allowed:           true,
 		Deadline:          deadline,
+		NumOfReviewer:     1,
 		NumOfPrerequisite: 0,
 		Status:            0,
 	}
@@ -67,6 +69,10 @@ func (t *Task) SetStatus(newStatus Status) {
 
 func (t *Task) ReducePrerequisite() {
 	t.NumOfPrerequisite--
+}
+
+func (t *Task) ReduceNumOfReviewer() {
+	t.NumOfReviewer--
 }
 
 func (t *Task) Allow() {
