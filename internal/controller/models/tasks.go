@@ -41,11 +41,11 @@ func BuildTasks(T []*entity.TaskWithDetails) []*TaskWithDetail {
 			User:             t.Username,
 			ExpectedOutcome:  t.ExpectedOutcome,
 			Request:          t.Request,
-			TaskDeadline:     t.Deadline,
+			TaskDeadline:     t.Deadline.Format("2/Jan/2006 15:04:05"),
 			Status:           t.Status,
 			OrderTitle:       t.OrderTitle,
 			OrderDescription: t.OrderDescription,
-			OrderDeadline:    t.OrderDeadline,
+			OrderDeadline:    t.OrderDeadline.Format("2/Jan/2006 15:04:05"),
 		}
 		tasks = append(tasks, &task)
 

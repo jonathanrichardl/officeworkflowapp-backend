@@ -69,7 +69,7 @@ func (c *Controller) AddNewOrder(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Invalid Request, Can't unmarshal :", err.Error())
 		return
 	}
-	deadline, _ := time.Parse("2 Jan 2006", order.Deadline)
+	deadline, _ := time.Parse("2/Jan/2006 15:04:05", order.Deadline)
 	id, err := c.order.NewOrder(order.Title, order.Description, deadline)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
