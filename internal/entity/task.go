@@ -31,7 +31,7 @@ type TaskWithDetails struct {
 	AssignedBy       string
 	Username         string
 	Note             string
-	Deadline         string
+	Deadline         time.Time
 	RequirementID    int
 	Request          string
 	ExpectedOutcome  string
@@ -39,7 +39,7 @@ type TaskWithDetails struct {
 	Status           Status
 	OrderTitle       string
 	OrderDescription string
-	OrderDeadline    string
+	OrderDeadline    time.Time
 }
 
 func NewTask(assignerID string, requirementID int, userID string, note string, prerequisiteTaskID []string, deadline time.Time) *Task {
