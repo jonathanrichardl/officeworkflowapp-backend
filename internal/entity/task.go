@@ -31,6 +31,7 @@ type TaskWithDetails struct {
 	AssignedBy       string
 	Username         string
 	Note             string
+	Deadline         string
 	RequirementID    int
 	Request          string
 	ExpectedOutcome  string

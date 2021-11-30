@@ -94,7 +94,7 @@ func (r *TaskMySQL) Get(id string) (*entity.Task, error) {
 }
 
 func (r *TaskMySQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error) {
-	stmt, err := r.db.Prepare(`SELECT tasks.id, requirements.request, requirements.expected_outcome,  
+	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.deadline, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline,tasks.fulfillment_status
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN orders ON requirements.order_id = orders.id 
@@ -109,7 +109,7 @@ func (r *TaskMySQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
+		err = rows.Scan(&t.ID, &t.Deadline, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
 			&t.Status)
 		if err != nil {
 			return nil, err
@@ -131,7 +131,7 @@ func (r *TaskMySQL) Update(e *entity.Task) error {
 }
 
 func (r *TaskMySQL) List() ([]*entity.TaskWithDetails, error) {
-	stmt, err := r.db.Prepare(`SELECT tasks.id, users.username, requirements.request, requirements.expected_outcome,  
+	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.deadline, users.username, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN users on users.id = tasks.user_id
@@ -146,7 +146,7 @@ func (r *TaskMySQL) List() ([]*entity.TaskWithDetails, error) {
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
+		err = rows.Scan(&t.ID, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
 			&t.Status)
 		if err != nil {
 			return nil, err
@@ -162,7 +162,7 @@ func (r *TaskMySQL) List() ([]*entity.TaskWithDetails, error) {
 }
 
 func (r *TaskMySQL) GetTasksToReview() ([]*entity.TaskWithDetails, error) {
-	stmt, err := r.db.Prepare(`SELECT tasks.id, users.username, requirements.request, requirements.expected_outcome,  
+	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.deadline, users.username, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN users on users.id = tasks.user_id
@@ -178,7 +178,7 @@ func (r *TaskMySQL) GetTasksToReview() ([]*entity.TaskWithDetails, error) {
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
+		err = rows.Scan(&t.ID, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
 			&t.Status)
 		if err != nil {
 			return nil, err
