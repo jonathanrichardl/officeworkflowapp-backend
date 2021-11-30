@@ -60,7 +60,6 @@ func (c *Controller) RegisterHandler() {
 	admin.HandleFunc("/tasks", c.GetAllAssignedTasks).Methods("GET")
 	admin.HandleFunc("/tasks/submitted", c.GetTaskstoReview).Methods("GET")
 	admin.HandleFunc("/submission={id}/review", c.ReviewSubmission).Methods("POST")
-
 }
 
 func (c *Controller) Start() {
