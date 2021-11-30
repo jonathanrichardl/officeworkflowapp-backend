@@ -13,7 +13,7 @@ type TaskWithDetail struct {
 	User             string        `json:"assigned_user,omitempty"`
 	Request          string        `json:"task"`
 	ExpectedOutcome  string        `json:"outcome"`
-	Status           entity.Status `json:"status,omitempty"`
+	Status           entity.Status `json:"status"`
 	OrderTitle       string        `json:"order_title"`
 	OrderDescription string        `json:"order_description"`
 	OrderDeadline    string        `json:"order_deadline"`
