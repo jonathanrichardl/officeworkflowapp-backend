@@ -38,6 +38,7 @@ func (c *Controller) processReviewForm(taskID string, wg *sync.WaitGroup, approv
 	task.NumOfReviewer += uint8(len(forwardTo))
 	if approved {
 		task.ReduceNumOfReviewer()
+		c.logger.InfoLogger.Println("Total Reviewer Left = ", task.NumOfReviewer)
 		if task.NumOfReviewer == 0 {
 			wg2.Add(1)
 			go c.updateTaskStatus(taskID, &wg2, 2)
