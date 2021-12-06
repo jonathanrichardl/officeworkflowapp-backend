@@ -28,7 +28,7 @@ func main() {
 	requirementRepo := repository.NewRequirementsPSQL(db)
 	userRepo := repository.NewUserPSQL(db)
 	/*
-		db, err := sql.Open("mysql", "root:123jonathan123100300!!!@tcp(localhost:3306)/testers?parseTime=true")
+		db, err := sql.Open("mysql", "root:ergo@tcp(localhost:3306)/testers?parseTime=true")
 		if err != nil {
 			panic(err)
 		}
