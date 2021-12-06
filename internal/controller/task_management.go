@@ -41,6 +41,9 @@ func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
 	var wg sync.WaitGroup
 	wg.Add(1)
 	go c.processReviewForm(submission.TaskID, &wg, reviewForm.Approved, reviewForm.ForwardTo)
+	wg.Done()
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Review Success"))
 
 }
 
