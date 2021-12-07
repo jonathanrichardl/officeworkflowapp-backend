@@ -10,14 +10,16 @@ type ReviewForm struct {
 
 type TaskWithDetail struct {
 	Id               string        `json:"id"`
+	Note             string        `json:"note"`
 	User             string        `json:"assigned_user,omitempty"`
+	Username         string        `json:"assigned_username,omitempty"`
 	Request          string        `json:"task"`
-	ExpectedOutcome  string        `json:"outcome"`
+	ExpectedOutcome  string        `json:"outcome,omitempty"`
 	Status           entity.Status `json:"status"`
 	TaskDeadline     string        `json:"deadline,omitempty"`
-	OrderTitle       string        `json:"order_title"`
-	OrderDescription string        `json:"order_description"`
-	OrderDeadline    string        `json:"order_deadline"`
+	OrderTitle       string        `json:"order_title,omitempty"`
+	OrderDescription string        `json:"order_description,omitempty"`
+	OrderDeadline    string        `json:"order_deadline,omitempty"`
 }
 
 type NewTask struct {
@@ -38,7 +40,9 @@ func BuildTasks(T []*entity.TaskWithDetails) []*TaskWithDetail {
 	for _, t := range T {
 		task := TaskWithDetail{
 			Id:               t.ID,
-			User:             t.Username,
+			Note:             t.Note,
+			User:             t.UserID,
+			Username:         t.Username,
 			ExpectedOutcome:  t.ExpectedOutcome,
 			Request:          t.Request,
 			TaskDeadline:     t.Deadline.Format("2/Jan/2006 15:04:05"),

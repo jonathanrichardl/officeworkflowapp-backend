@@ -8,6 +8,7 @@ import (
 type Reader interface {
 	Get(id string) (*entity.Task, error)
 	GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
+	GetByOrderID(orderID string) ([]*entity.TaskWithDetails, error)
 	List() ([]*entity.TaskWithDetails, error)
 	GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error)
 }
@@ -29,6 +30,7 @@ type UseCase interface {
 	Get(id string) (*entity.Task, error)
 	ListAllTasks() ([]*entity.TaskWithDetails, error)
 	GetTasksofUser(userID string) ([]*entity.TaskWithDetails, error)
+	GetTasksOnSpecificOrder(orderID string) ([]*entity.TaskWithDetails, error)
 	UpdateTask(t *entity.Task) error
 	DeleteTask(id string) error
 	CreateTask(assignerID string, requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error)

@@ -43,6 +43,33 @@ func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 
 }
 
+func (r *TaskPSQL) GetByOrderID(orderID string) ([]*entity.TaskWithDetails, error) {
+	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.note, users.username, tasks.deadline, requirements.request, 
+								requirements.expected_outcome,orders.title 
+								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
+								INNER JOIN users ON users.id = tasks.user_id
+								INNER JOIN orders ON requirements.order_id = orders.id 
+								WHERE orders.id = $1`)
+	if err != nil {
+		return nil, err
+	}
+	var tasks []*entity.TaskWithDetails
+	rows, err := stmt.Query(orderID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var task entity.TaskWithDetails
+		err = rows.Scan(&task.ID, &task.Note, &task.Username, &task.Deadline, &task.Request, &task.ExpectedOutcome, &task.OrderTitle)
+		if err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, &task)
+	}
+	return tasks, nil
+
+}
+
 func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.allowed, tasks.user_id, tasks.fulfillment_status, tasks.num_of_prerequisite, tasks.deadline
 							  	FROM prerequisite INNER JOIN tasks on tasks.id = prerequisite.task_id
@@ -93,7 +120,7 @@ func (r *TaskPSQL) Get(id string) (*entity.Task, error) {
 }
 
 func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error) {
-	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.deadline, requirements.request, requirements.expected_outcome,  
+	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.note, tasks.deadline, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline,tasks.fulfillment_status
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN orders ON requirements.order_id = orders.id 
@@ -108,7 +135,7 @@ func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Deadline, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
+		err = rows.Scan(&t.ID, &t.Note, &t.Deadline, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
 			&t.Status)
 		if err != nil {
 			return nil, err
@@ -130,7 +157,7 @@ func (r *TaskPSQL) Update(e *entity.Task) error {
 }
 
 func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
-	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.deadline, users.username, requirements.request, requirements.expected_outcome,  
+	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.note, tasks.deadline, users.username, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN users on users.id = tasks.user_id
@@ -145,7 +172,7 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
+		err = rows.Scan(&t.ID, &t.Note, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
 			&t.Status)
 		if err != nil {
 			return nil, err
@@ -161,7 +188,7 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 }
 
 func (r *TaskPSQL) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error) {
-	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.deadline, users.username, requirements.request, requirements.expected_outcome,  
+	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.note, tasks.deadline, users.username, requirements.request, requirements.expected_outcome,  
 								orders.title, orders.description, orders.deadline 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN users ON users.id = tasks.user_id
@@ -178,7 +205,7 @@ func (r *TaskPSQL) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, 
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline)
+		err = rows.Scan(&t.ID, &t.Note, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline)
 		if err != nil {
 			return nil, err
 		}
