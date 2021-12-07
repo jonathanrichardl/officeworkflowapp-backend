@@ -55,5 +55,8 @@ func (s *Service) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, e
 
 func (s *Service) AddReviewer(TaskID string, NewReviewerID string) error {
 	return s.repo.AddReviewer(TaskID, NewReviewerID)
+}
 
+func (s *Service) GetTasksOnSpecificOrder(orderID string) ([]*entity.TaskWithDetails, error) {
+	return s.repo.GetByOrderID(orderID)
 }

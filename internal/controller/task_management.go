@@ -14,8 +14,7 @@ import (
 )
 
 func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
-	request := mux.Vars(r)
-	submissionID := request["id"]
+	submissionID := mux.Vars(r)["id"]
 	var reviewForm models.ReviewForm
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -48,8 +47,7 @@ func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
-	auth := r.Context().Value(ctxKey{})
-	adminID := fmt.Sprintf("%v", auth)
+	adminID := fmt.Sprintf("%v", r.Context().Value(ctxKey{}))
 	var newTasks models.BulkAddedTasks
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -82,8 +80,7 @@ func (c *Controller) BulkAssignTasks(w http.ResponseWriter, r *http.Request) {
 
 }
 func (c *Controller) AddNewTask(w http.ResponseWriter, r *http.Request) {
-	auth := r.Context().Value(ctxKey{})
-	adminID := fmt.Sprintf("%v", auth)
+	adminID := fmt.Sprintf("%v", r.Context().Value(ctxKey{}))
 	var newTask models.NewTask
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -123,8 +120,7 @@ func (c *Controller) GetAllAssignedTasks(w http.ResponseWriter, r *http.Request)
 }
 
 func (c *Controller) GetTaskstoReview(w http.ResponseWriter, r *http.Request) {
-	auth := r.Context().Value(ctxKey{})
-	adminID := fmt.Sprintf("%v", auth)
+	adminID := fmt.Sprintf("%v", r.Context().Value(ctxKey{}))
 	tasks, err := c.task.GetTasksToReview(adminID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -135,9 +131,23 @@ func (c *Controller) GetTaskstoReview(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetTasksOfUser(w http.ResponseWriter, r *http.Request) {
-	request := mux.Vars(r)
-	userID := request["id"]
-	tasks, err := c.task.GetTasksofUser(userID)
+	tasks, err := c.task.GetTasksofUser(mux.Vars(r)["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while getting tasks: ", err.Error())
+		return
+	}
+	if tasks == nil {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("No Tasks Present"))
+		return
+	}
+	response := models.BuildTasks(tasks)
+	json.NewEncoder(w).Encode(response)
+}
+
+func (c *Controller) GetTasksOnSpecificOrder(w http.ResponseWriter, r *http.Request) {
+	tasks, err := c.task.GetTasksOnSpecificOrder(mux.Vars(r)["id"])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error while getting tasks: ", err.Error())
