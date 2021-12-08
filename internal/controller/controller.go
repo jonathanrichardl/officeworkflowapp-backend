@@ -58,7 +58,7 @@ func (c *Controller) RegisterHandler() {
 	admin.HandleFunc("/tasks", c.GetAllAssignedTasks).Methods("GET")
 	admin.HandleFunc("/tasks", c.AddNewTask).Methods("POST")
 	admin.HandleFunc("/tasks/bulk", c.BulkAssignTasks).Methods("POST")
-	admin.HandleFunc("/tasks/order={order}", c.GetTasksOnSpecificOrder).Methods("GET")
+	admin.HandleFunc("/tasks/order={id}", c.GetTasksOnSpecificOrder).Methods("GET")
 	admin.HandleFunc("/tasks/submitted", c.GetTaskstoReview).Methods("GET")
 	admin.HandleFunc("/submission={id}/review", c.ReviewSubmission).Methods("POST")
 }
