@@ -147,6 +147,7 @@ func (c *Controller) GetTasksOfUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *Controller) GetTasksOnSpecificOrder(w http.ResponseWriter, r *http.Request) {
+	fmt.Println(mux.Vars(r)["id"])
 	tasks, err := c.task.GetTasksOnSpecificOrder(mux.Vars(r)["id"])
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
