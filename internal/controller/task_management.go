@@ -153,7 +153,7 @@ func (c *Controller) GetTasksOnSpecificOrder(w http.ResponseWriter, r *http.Requ
 		c.logger.ErrorLogger.Println("Error while getting tasks: ", err.Error())
 		return
 	}
-	if tasks == nil {
+	if len(tasks) == 0 {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("No Tasks Present"))
 		return
