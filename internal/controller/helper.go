@@ -15,12 +15,12 @@ func (c *Controller) saveSubmission(submission models.Submission, wg *sync.WaitG
 	wg.Done()
 }
 
-func (c *Controller) updateTaskStatus(taskID string, wg *sync.WaitGroup, status int8) {
+func (c *Controller) updateTaskStatus(taskID string, wg *sync.WaitGroup, status uint8) {
 	task, err := c.task.Get(taskID)
 	if err != nil {
 		panic(err)
 	}
-	task.Status = entity.Status(status)
+	task.SetStatus(status)
 	err = c.task.UpdateTask(task)
 	if err != nil {
 		panic(err)
@@ -82,6 +82,7 @@ func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg *sync.Wait
 		wg2.Add(1)
 		go c.updateAffectedTasks(task, &wg2)
 	}
+	wg2.Wait()
 	wg.Done()
 }
 

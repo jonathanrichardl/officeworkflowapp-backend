@@ -69,8 +69,8 @@ func (c *Controller) PostSubmission(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("Submission has been accepted")))
 	var wg sync.WaitGroup
+	var m sync.Mutex
 	wg.Add(3)
-
 	go c.saveSubmission(submission, &wg)
 	go c.updateTaskStatus(task.ID, &wg, 1)
 	go c.deletePrerequisite(task.ID, &wg)
