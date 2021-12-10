@@ -64,8 +64,8 @@ func NewTask(assignerID string, requirementID int, userID string, note string, p
 	return &task
 }
 
-func (t *Task) SetStatus(newStatus Status) {
-	t.Status = newStatus
+func (t *Task) SetStatus(newStatus uint8) {
+	t.Status = Status(newStatus)
 }
 
 func (t *Task) ReducePrerequisite() {
