@@ -15,6 +15,19 @@ func NewTaskPSQL(db *sql.DB) *TaskPSQL {
 	}
 }
 
+func (r *TaskPSQL) AddPrerequisite(taskID string, prerequisite string) error {
+	stmt, err := r.db.Prepare(`INSERT INTO prerequisite (task_id, prerequisite) values ($1,$2)`)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(taskID, prerequisite)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
+}
 func (r *TaskPSQL) Create(t *entity.Task) (string, error) {
 	stmt, err := r.db.Prepare(`
 		INSERT INTO tasks (assigner_id, ID, user_id, requirement_id, note, fulfillment_status, allowed, deadline, num_of_prerequisite, total_reviewer) 
@@ -72,8 +85,8 @@ func (r *TaskPSQL) GetByOrderID(orderID string) ([]*entity.TaskWithDetails, erro
 
 func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.allowed, tasks.user_id, tasks.fulfillment_status, tasks.num_of_prerequisite, tasks.deadline
-							  	FROM prerequisite INNER JOIN tasks on tasks.id = prerequisite.task_id
-								 WHERE prerequisite = $1`)
+							  	FROM prerequisite INNER JOIN tasks on prerequisite.task_id = tasks.id
+								WHERE prerequisite = $1`)
 
 	if err != nil {
 		return nil, err

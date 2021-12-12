@@ -38,7 +38,14 @@ func (s *Service) DeleteTask(id string) error {
 
 func (s *Service) CreateTask(assignerID string, requirementID int, userID string, Note string, prerequisiteTaskID []string, Deadline time.Time) (string, error) {
 	task := entity.NewTask(assignerID, requirementID, userID, Note, prerequisiteTaskID, Deadline)
-	return s.repo.Create(task)
+	taskID, err := s.repo.Create(task)
+	for _, prerequisite := range prerequisiteTaskID {
+		err = s.repo.AddPrerequisite(taskID, prerequisite)
+		if err != nil {
+			return "", err
+		}
+	}
+	return taskID, err
 }
 
 func (s *Service) SaveTask(task *entity.Task) (string, error) {
