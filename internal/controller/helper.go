@@ -73,12 +73,14 @@ func (c *Controller) updateRequirementStatus(requirementID int, wg *sync.WaitGro
 }
 
 func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg *sync.WaitGroup) {
+	c.logger.InfoLogger.Println("Removing Prerequisite: ", prerequisiteTaskID)
 	affectedTasks, err := c.task.RemovePrerequisite(prerequisiteTaskID)
 	var wg2 sync.WaitGroup
 	if err != nil {
 		panic(err)
 	}
 	for _, task := range affectedTasks {
+		c.logger.InfoLogger.Println("Affected Task: ", task.ID)
 		wg2.Add(1)
 		go c.updateAffectedTasks(task, &wg2)
 	}
@@ -88,6 +90,8 @@ func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg *sync.Wait
 
 func (c *Controller) updateAffectedTasks(affectedTask *entity.Task, wg *sync.WaitGroup) {
 	affectedTask.ReducePrerequisite()
+	c.logger.InfoLogger.Println("Remaining Prerequisite: ", affectedTask.NumOfPrerequisite)
+
 	if affectedTask.NumOfPrerequisite == 0 {
 		affectedTask.Allow()
 	}
