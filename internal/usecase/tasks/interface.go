@@ -19,6 +19,7 @@ type Writer interface {
 	Delete(id string) error
 	RemovePrerequisite(prerequisiteID string) ([]*entity.Task, error)
 	AddReviewer(TaskID string, NewReviewerID string) error
+	AddPrerequisite(taskID string, prerequisite string) error
 }
 
 type Repository interface {
