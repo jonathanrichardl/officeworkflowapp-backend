@@ -115,6 +115,15 @@ func (c *Controller) GetAllAssignedTasks(w http.ResponseWriter, r *http.Request)
 		w.WriteHeader(http.StatusInternalServerError)
 		c.logger.ErrorLogger.Println("Error retrieving all tasks: ", err.Error())
 	}
+	for _, task := range tasks {
+		if task.NumOfPrerequisite != 0 {
+			prerequisites, err := c.task.GetPrerequisites(task.ID)
+			if err != nil {
+				c.logger.ErrorLogger.Println("Can't retrieve prerequisites: ", err.Error())
+			}
+			task.Prerequisites = prerequisites
+		}
+	}
 	response := models.BuildTasks(tasks)
 	json.NewEncoder(w).Encode(response)
 }

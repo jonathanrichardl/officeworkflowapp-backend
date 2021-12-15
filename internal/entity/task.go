@@ -27,19 +27,21 @@ type Task struct {
 }
 
 type TaskWithDetails struct {
-	ID               string
-	AssignedBy       string
-	Username         string
-	Note             string
-	Deadline         time.Time
-	RequirementID    int
-	Request          string
-	ExpectedOutcome  string
-	UserID           string
-	Status           Status
-	OrderTitle       string
-	OrderDescription string
-	OrderDeadline    time.Time
+	ID                string
+	AssignedBy        string
+	Username          string
+	Note              string
+	Deadline          time.Time
+	RequirementID     int
+	Request           string
+	ExpectedOutcome   string
+	UserID            string
+	Status            Status
+	OrderTitle        string
+	OrderDescription  string
+	OrderDeadline     time.Time
+	NumOfPrerequisite uint8
+	Prerequisites     []string
 }
 
 func NewTask(assignerID string, requirementID int, userID string, note string, prerequisiteTaskID []string, deadline time.Time) *Task {

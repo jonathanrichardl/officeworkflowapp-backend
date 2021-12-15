@@ -10,6 +10,7 @@ func (c *Controller) saveSubmission(submission models.Submission, wg *sync.WaitG
 	image := models.DecodeSubmissionPayload(submission)
 	_, err := c.submissions.NewSubmission(submission.Message, image, submission.TaskID)
 	if err != nil {
+		c.logger.ErrorLogger.Println("Error saving submission: ", err.Error())
 		panic(err)
 	}
 	wg.Done()
@@ -18,11 +19,13 @@ func (c *Controller) saveSubmission(submission models.Submission, wg *sync.WaitG
 func (c *Controller) updateTaskStatus(taskID string, wg *sync.WaitGroup, status uint8) {
 	task, err := c.task.Get(taskID)
 	if err != nil {
+		c.logger.ErrorLogger.Println("Error retrieving task: ", err.Error())
 		panic(err)
 	}
 	task.SetStatus(status)
 	err = c.task.UpdateTask(task)
 	if err != nil {
+		c.logger.ErrorLogger.Println("Error updating task status: ", err.Error())
 		panic(err)
 	}
 	wg.Done()
@@ -33,6 +36,7 @@ func (c *Controller) processReviewForm(taskID string, wg *sync.WaitGroup, approv
 	task, err := c.task.Get(taskID)
 	var wg2 sync.WaitGroup
 	if err != nil {
+		c.logger.ErrorLogger.Println("Error retrieving task: ", err.Error())
 		panic(err)
 	}
 	task.NumOfReviewer += uint8(len(forwardTo))
@@ -56,6 +60,7 @@ func (c *Controller) forward(taskID string, adminIDs []string, wg *sync.WaitGrou
 	for _, id := range adminIDs {
 		err := c.task.AddReviewer(taskID, id)
 		if err != nil {
+			c.logger.ErrorLogger.Println("Error forwarding: ", err.Error())
 			panic(err)
 		}
 	}
@@ -65,6 +70,7 @@ func (c *Controller) forward(taskID string, adminIDs []string, wg *sync.WaitGrou
 func (c *Controller) updateRequirementStatus(requirementID int, wg *sync.WaitGroup, status int8) {
 	req, err := c.requirements.GetRequirementbyID(requirementID)
 	if err != nil {
+		c.logger.ErrorLogger.Println("Error Getting requirement: ", err.Error())
 		panic(err)
 	}
 	req.SetStatus(status)
@@ -77,6 +83,7 @@ func (c *Controller) deletePrerequisite(prerequisiteTaskID string, wg *sync.Wait
 	affectedTasks, err := c.task.RemovePrerequisite(prerequisiteTaskID)
 	var wg2 sync.WaitGroup
 	if err != nil {
+		c.logger.ErrorLogger.Println("Error deleting prerequisite: ", err.Error())
 		panic(err)
 	}
 	for _, task := range affectedTasks {
@@ -97,6 +104,7 @@ func (c *Controller) updateAffectedTasks(affectedTask *entity.Task, wg *sync.Wai
 	}
 	err := c.task.UpdateTask(affectedTask)
 	if err != nil {
+		c.logger.ErrorLogger.Println("Error Updating task: ", err.Error())
 		panic(err)
 	}
 	wg.Done()
