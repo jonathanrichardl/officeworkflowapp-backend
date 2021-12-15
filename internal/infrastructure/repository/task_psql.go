@@ -133,6 +133,7 @@ func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 	}
 	return affectedTasks, nil
 }
+
 func (r *TaskPSQL) Get(id string) (*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT id, requirement_id, allowed, user_id, fulfillment_status, num_of_prerequisite, deadline 
 								from tasks where id = $1`)
