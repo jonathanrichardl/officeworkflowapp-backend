@@ -11,6 +11,7 @@ type Reader interface {
 	GetByOrderID(orderID string) ([]*entity.TaskWithDetails, error)
 	List() ([]*entity.TaskWithDetails, error)
 	GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error)
+	GetPrerequisites(taskID string) ([]string, error)
 }
 
 type Writer interface {
@@ -39,4 +40,5 @@ type UseCase interface {
 	SaveTask(t *entity.Task) (string, error)
 	GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error)
 	AddReviewer(TaskID string, NewReviewerID string) error
+	GetPrerequisites(TaskID string) ([]string, error)
 }

@@ -67,3 +67,7 @@ func (s *Service) AddReviewer(TaskID string, NewReviewerID string) error {
 func (s *Service) GetTasksOnSpecificOrder(orderID string) ([]*entity.TaskWithDetails, error) {
 	return s.repo.GetByOrderID(orderID)
 }
+
+func (s *Service) GetPrerequisites(TaskID string) ([]string, error) {
+	return s.repo.GetPrerequisites(TaskID)
+}

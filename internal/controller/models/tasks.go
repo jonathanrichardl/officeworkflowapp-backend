@@ -15,6 +15,7 @@ type TaskWithDetail struct {
 	Username         string        `json:"assigned_username,omitempty"`
 	Request          string        `json:"task"`
 	ExpectedOutcome  string        `json:"outcome,omitempty"`
+	Prerequisites    []string      `json:"prerequisites,omitempty"`
 	Status           entity.Status `json:"status"`
 	TaskDeadline     string        `json:"deadline,omitempty"`
 	OrderTitle       string        `json:"order_title,omitempty"`
@@ -50,6 +51,7 @@ func BuildTasks(T []*entity.TaskWithDetails) []*TaskWithDetail {
 			OrderTitle:       t.OrderTitle,
 			OrderDescription: t.OrderDescription,
 			OrderDeadline:    t.OrderDeadline.Format("2/Jan/2006 15:04:05"),
+			Prerequisites:    t.Prerequisites,
 		}
 		tasks = append(tasks, &task)
 

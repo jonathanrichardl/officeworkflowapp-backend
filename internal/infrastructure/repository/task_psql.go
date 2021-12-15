@@ -83,6 +83,27 @@ func (r *TaskPSQL) GetByOrderID(orderID string) ([]*entity.TaskWithDetails, erro
 
 }
 
+func (r *TaskPSQL) GetPrerequisites(taskID string) ([]string, error) {
+	stmt, err := r.db.Prepare(`SELECT requirements.request
+							  	FROM prerequisite INNER JOIN tasks on prerequisite.task_id = tasks.id
+								INNER JOIN requirements ON tasks.requirement_id = requirements.id
+								WHERE prerequisite = $1`)
+	if err != nil {
+		return nil, err
+	}
+	var prerequisites []string
+	rows, err := stmt.Query(taskID)
+	for rows.Next() {
+		var prerequisite string
+		err = rows.Scan(&prerequisite)
+		if err != nil {
+			return nil, err
+		}
+		prerequisites = append(prerequisites, prerequisite)
+	}
+	return prerequisites, nil
+}
+
 func (r *TaskPSQL) RemovePrerequisite(taskID string) ([]*entity.Task, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.allowed, tasks.user_id, tasks.fulfillment_status, tasks.num_of_prerequisite, tasks.deadline
 							  	FROM prerequisite INNER JOIN tasks on prerequisite.task_id = tasks.id
@@ -171,7 +192,7 @@ func (r *TaskPSQL) Update(e *entity.Task) error {
 
 func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 	stmt, err := r.db.Prepare(`SELECT tasks.id, tasks.note, tasks.deadline, users.username, requirements.request, requirements.expected_outcome,  
-								orders.title, orders.description, orders.deadline, tasks.fulfillment_status 
+								orders.title, orders.description, orders.deadline, tasks.fulfillment_status, tasks.num_of_prerequisite 
 								FROM tasks INNER JOIN requirements ON tasks.requirement_id=requirements.id 
 								INNER JOIN users on users.id = tasks.user_id
 								INNER JOIN orders ON requirements.order_id = orders.id `)
@@ -185,8 +206,8 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 	}
 	for rows.Next() {
 		var t entity.TaskWithDetails
-		err = rows.Scan(&t.ID, &t.Note, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle, &t.OrderDescription, &t.OrderDeadline,
-			&t.Status)
+		err = rows.Scan(&t.ID, &t.Note, &t.Deadline, &t.Username, &t.Request, &t.ExpectedOutcome, &t.OrderTitle,
+			&t.OrderDescription, &t.OrderDeadline, &t.Status, &t.NumOfPrerequisite)
 		if err != nil {
 			return nil, err
 		}
