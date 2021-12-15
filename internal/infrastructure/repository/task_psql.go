@@ -140,6 +140,7 @@ func (r *TaskPSQL) Get(id string) (*entity.Task, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	row := stmt.QueryRow(id)
 	if row == nil {
 		return nil, err
