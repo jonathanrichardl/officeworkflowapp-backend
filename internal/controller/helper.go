@@ -49,6 +49,7 @@ func (c *Controller) processReviewForm(taskID string, wg *sync.WaitGroup, approv
 		wg2.Add(1)
 		go c.forward(taskID, forwardTo, &wg2)
 	} else {
+		wg2.Add(1)
 		go c.updateTaskStatus(taskID, &wg2, 0)
 	}
 	wg2.Wait()
