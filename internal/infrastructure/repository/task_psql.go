@@ -260,7 +260,6 @@ func (r *TaskPSQL) Delete(TaskID string) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
