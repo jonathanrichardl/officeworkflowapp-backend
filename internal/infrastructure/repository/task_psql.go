@@ -264,7 +264,7 @@ func (r *TaskPSQL) Delete(TaskID string) error {
 }
 
 func (r *TaskPSQL) AddReviewer(TaskID string, NewReviewerID string) error {
-	stmt, err := r.db.Prepare(`INSERT INTO forwarded_review (task_id, forwarded_review.reviewer_id) VALUES ($1,$2)`)
+	stmt, err := r.db.Prepare(`INSERT INTO forwarded_review (task_id, reviewer_id) VALUES ($1,$2)`)
 	if err != nil {
 		return err
 	}
