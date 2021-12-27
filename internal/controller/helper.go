@@ -42,6 +42,7 @@ func (c *Controller) processReviewForm(taskID string, wg *sync.WaitGroup, approv
 	task.NumOfReviewer += uint8(len(forwardTo))
 	if approved {
 		task.ReduceNumOfReviewer()
+		c.task.UpdateTask(task)
 		if task.NumOfReviewer == 0 || task.NumOfReviewer == 255 {
 			wg2.Add(1)
 			go c.updateTaskStatus(taskID, &wg2, 2)
