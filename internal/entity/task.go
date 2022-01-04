@@ -42,6 +42,13 @@ type TaskWithDetails struct {
 	OrderDeadline     time.Time
 	NumOfPrerequisite uint8
 	Prerequisites     []string
+	Messages          []Message
+}
+
+type Message struct {
+	UserID   string
+	Username string
+	Message  string
 }
 
 func NewTask(assignerID string, requirementID int, userID string, note string, prerequisiteTaskID []string, deadline time.Time) *Task {

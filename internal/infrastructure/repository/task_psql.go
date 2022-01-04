@@ -176,6 +176,10 @@ func (r *TaskPSQL) GetbyUserID(userID string) ([]*entity.TaskWithDetails, error)
 		if err != nil {
 			return nil, err
 		}
+		t.Messages, err = r.GetReviewMessages(t.ID)
+		if err != nil {
+			return nil, err
+		}
 		tasks = append(tasks, &t)
 	}
 
@@ -213,6 +217,10 @@ func (r *TaskPSQL) List() ([]*entity.TaskWithDetails, error) {
 		if err != nil {
 			return nil, err
 		}
+		t.Messages, err = r.GetReviewMessages(t.ID)
+		if err != nil {
+			return nil, err
+		}
 		tasks = append(tasks, &t)
 	}
 	if len(tasks) == 0 {
@@ -245,6 +253,10 @@ func (r *TaskPSQL) GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, 
 		if err != nil {
 			return nil, err
 		}
+		t.Messages, err = r.GetReviewMessages(t.ID)
+		if err != nil {
+			return nil, err
+		}
 		tasks = append(tasks, &t)
 	}
 	if len(tasks) == 0 {
@@ -273,4 +285,39 @@ func (r *TaskPSQL) AddReviewer(TaskID string, NewReviewerID string) error {
 		return err
 	}
 	return nil
+}
+
+func (r *TaskPSQL) AddReviewMessage(TaskID string, Message entity.Message) error {
+	stmt, err := r.db.Prepare(`INSERT INTO submission_messages (task_id, user_id, msg) VALUES ($1,$2,$3)`)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(TaskID, Message.UserID, Message.Message)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *TaskPSQL) GetReviewMessages(TaskID string) ([]entity.Message, error) {
+	stmt, err := r.db.Prepare(`SELECT username, message FROM submission_messages 
+	INNER JOIN users ON users.id = submission_messages.user_id 
+	WHERE task_id = $1`)
+	if err != nil {
+		return nil, err
+	}
+	var messages []entity.Message
+	rows, err := stmt.Query(TaskID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var message entity.Message
+		err = rows.Scan(&message.Username, &message.Message)
+		if err != nil {
+			return nil, err
+		}
+		messages = append(messages, message)
+	}
+	return messages, nil
 }

@@ -14,6 +14,7 @@ import (
 )
 
 func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
+	adminID := fmt.Sprintf("%v", r.Context().Value(ctxKey{}))
 	submissionID := mux.Vars(r)["id"]
 	var reviewForm models.ReviewForm
 	req, err := ioutil.ReadAll(r.Body)
@@ -39,7 +40,7 @@ func (c *Controller) ReviewSubmission(w http.ResponseWriter, r *http.Request) {
 	}
 	var wg sync.WaitGroup
 	wg.Add(1)
-	go c.processReviewForm(submission.TaskID, &wg, reviewForm.Approved, reviewForm.ForwardTo)
+	go c.processReviewForm(adminID, submission.TaskID, &wg, reviewForm.Approved, reviewForm.ForwardTo, reviewForm.Message)
 	wg.Wait()
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Review Success"))

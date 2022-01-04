@@ -21,6 +21,12 @@ type TaskWithDetail struct {
 	OrderTitle       string        `json:"order_title,omitempty"`
 	OrderDescription string        `json:"order_description,omitempty"`
 	OrderDeadline    string        `json:"order_deadline,omitempty"`
+	Feedbacks        []Feedback    `json:"feedbacks"`
+}
+
+type Feedback struct {
+	UserName string `json:"from"`
+	Message  string `json:"message"`
 }
 
 type NewTask struct {
@@ -53,6 +59,13 @@ func BuildTasks(T []*entity.TaskWithDetails) []*TaskWithDetail {
 			OrderDeadline:    t.OrderDeadline.Format("2/Jan/2006 15:04:05"),
 			Prerequisites:    t.Prerequisites,
 		}
+		var feedbacks []Feedback
+		for _, review := range t.Messages {
+			var feedback Feedback
+			feedback.UserName = review.Username
+			feedback.Message = review.Message
+		}
+		task.Feedbacks = feedbacks
 		tasks = append(tasks, &task)
 
 	}
