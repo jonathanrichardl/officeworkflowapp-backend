@@ -71,3 +71,7 @@ func (s *Service) GetTasksOnSpecificOrder(orderID string) ([]*entity.TaskWithDet
 func (s *Service) GetPrerequisites(TaskID string) ([]string, error) {
 	return s.repo.GetPrerequisites(TaskID)
 }
+
+func (s *Service) DeleteReviewer(UserID string) error {
+	return s.repo.DeleteReviewer(UserID)
+}

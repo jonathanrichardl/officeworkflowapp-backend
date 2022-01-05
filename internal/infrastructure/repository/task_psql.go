@@ -321,3 +321,15 @@ func (r *TaskPSQL) GetReviewMessages(TaskID string) ([]entity.Message, error) {
 	}
 	return messages, nil
 }
+
+func (r *TaskPSQL) DeleteReviewer(UserID string) error {
+	stmt, err := r.db.Prepare(`DELETE FROM forwarded_review WHERE reviewer_id = $1`)
+	if err != nil {
+		return err
+	}
+	_, err = stmt.Exec(UserID)
+	if err != nil {
+		return err
+	}
+	return nil
+}

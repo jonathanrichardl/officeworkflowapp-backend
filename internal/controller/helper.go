@@ -47,9 +47,10 @@ func (c *Controller) processReviewForm(userID string, taskID string, wg *sync.Wa
 	go c.addComment(taskID, userID, message, &wg2)
 	task.NumOfReviewer += uint8(len(forwardTo))
 	if approved {
+		c.task.DeleteReviewer(userID)
 		task.ReduceNumOfReviewer()
 		c.task.UpdateTask(task)
-		if (task.NumOfReviewer == 0) || (task.NumOfReviewer == 255) {
+		if task.NumOfReviewer == 0 {
 			wg2.Add(1)
 			go c.updateTaskStatus(taskID, &wg2, 2)
 		}

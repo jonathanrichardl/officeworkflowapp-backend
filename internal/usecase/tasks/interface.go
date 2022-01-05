@@ -20,6 +20,7 @@ type Writer interface {
 	Delete(id string) error
 	RemovePrerequisite(prerequisiteID string) ([]*entity.Task, error)
 	AddReviewer(TaskID string, NewReviewerID string) error
+	DeleteReviewer(UserID string) error
 	AddPrerequisite(taskID string, prerequisite string) error
 }
 
@@ -41,4 +42,5 @@ type UseCase interface {
 	GetTasksToReview(adminID string) ([]*entity.TaskWithDetails, error)
 	AddReviewer(TaskID string, NewReviewerID string) error
 	GetPrerequisites(TaskID string) ([]string, error)
+	DeleteReviewer(UserID string) error
 }
