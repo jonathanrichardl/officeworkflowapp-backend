@@ -32,11 +32,11 @@ func (c *Controller) updateTaskStatus(taskID string, wg *sync.WaitGroup, status 
 
 }
 
-func (c *Controller) addComment(taskID string, userID string, message string) {
+func (c *Controller) addComment(taskID string, userID string, message string, wg *sync.WaitGroup) {
 
 }
 
-func (c *Controller) processReviewForm(taskID string, wg *sync.WaitGroup, approved bool, forwardTo []string, message string) {
+func (c *Controller) processReviewForm(userID string, taskID string, wg *sync.WaitGroup, approved bool, forwardTo []string, message string) {
 	task, err := c.task.Get(taskID)
 	var wg2 sync.WaitGroup
 	if err != nil {
@@ -44,7 +44,7 @@ func (c *Controller) processReviewForm(taskID string, wg *sync.WaitGroup, approv
 		panic(err)
 	}
 	wg2.Add(1)
-	go c.addComment()
+	go c.addComment(taskID, userID, message, &wg2)
 	task.NumOfReviewer += uint8(len(forwardTo))
 	if approved {
 		task.ReduceNumOfReviewer()
