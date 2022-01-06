@@ -36,4 +36,5 @@ type UseCase interface {
 	UpdateUser(u *entity.User) error
 	DeleteUser(username string) error
 	Login(username string, password string) (string, string, bool, error)
+	ValidatePassword(userID string, password string) (bool, error)
 }

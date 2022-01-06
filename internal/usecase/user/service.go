@@ -97,8 +97,22 @@ func (s *Service) Login(username string, password string) (string, string, bool,
 	sum := sha256.Sum256([]byte(password))
 	if u.Password == fmt.Sprintf("\\x%x", sum) {
 		return u.ID, u.UserRole, true, nil
-
 	}
 	return username, u.UserRole, false, errors.New("Username/Password wrong")
 
+}
+
+func (s *Service) ValidatePassword(userID string, password string) (bool, error) {
+	u, err := s.repo.GetbyID(userID)
+	if err != nil {
+		return false, err
+	}
+	if u == nil {
+		return false, errors.New("UserID not found")
+	}
+	sum := sha256.Sum256([]byte(password))
+	if u.Password == fmt.Sprintf("\\x%x", sum) {
+		return true, nil
+	}
+	return false, nil
 }

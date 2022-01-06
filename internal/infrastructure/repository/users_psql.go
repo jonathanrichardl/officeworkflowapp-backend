@@ -55,13 +55,13 @@ func (r *UserPSQL) GetbyUsername(username string) (*entity.User, error) {
 }
 
 func (r *UserPSQL) GetbyID(ID string) (*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT id, username, email, user_role from users where ID = $1`)
+	stmt, err := r.db.Prepare(`SELECT id, username, email, pswd, user_role from users where ID = $1`)
 	if err != nil {
 		return nil, err
 	}
 	var user entity.User
 	row := stmt.QueryRow(ID)
-	err = row.Scan(&user.ID, &user.Username, &user.Email, &user.UserRole)
+	err = row.Scan(&user.ID, &user.Username, &user.Email, &user.Password, &user.UserRole)
 	if err != nil {
 		return nil, err
 	}

@@ -39,6 +39,7 @@ func (c *Controller) RegisterHandler() {
 	userapp.Use(c.validateUserJWT)
 	userapp.HandleFunc("/", c.GetTasks).Methods("GET")
 	userapp.HandleFunc("/profile", c.GetUserProfile).Methods("GET")
+	userapp.HandleFunc("/profile/passwordchange", c.ChangePassword).Methods("POST")
 	userapp.HandleFunc("/task={id}", c.GetSubmission).Methods("GET")
 	userapp.HandleFunc("/submission", c.PostSubmission).Methods("POST")
 	userapp.HandleFunc("/submission/id={id}", c.UpdateSubmission).Methods("POST")
