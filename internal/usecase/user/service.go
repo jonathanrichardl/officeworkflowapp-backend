@@ -116,3 +116,7 @@ func (s *Service) ValidatePassword(userID string, password string) (bool, error)
 	}
 	return false, nil
 }
+
+func (s *Service) ValidateUsername(username string) (bool, error) {
+	return s.repo.CheckUsername(username)
+}

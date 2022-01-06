@@ -24,6 +24,12 @@ func (c *Controller) NewUser(w http.ResponseWriter, r *http.Request) {
 		c.logger.ErrorLogger.Println("Invalid Request, Can't unmarshal :", err.Error())
 		return
 	}
+	exists, err := c.user.ValidateUsername(newUser.Username)
+	if exists {
+		w.WriteHeader(http.StatusConflict)
+		w.Write([]byte("Username Exists"))
+		return
+	}
 	id, err := c.user.CreateUser(newUser.Username, newUser.Email, newUser.Password, newUser.Role)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

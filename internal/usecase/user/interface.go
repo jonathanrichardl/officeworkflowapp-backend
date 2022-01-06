@@ -1,7 +1,6 @@
 package user
 
 import (
-	"database/sql"
 	"order-validation-v2/internal/entity"
 )
 
@@ -11,7 +10,7 @@ type Reader interface {
 	GetbyUsername(username string) (*entity.User, error)
 	Search(query string) ([]*entity.User, error)
 	List() ([]*entity.User, error)
-	CustomQuery(query string) (*sql.Rows, error)
+	CheckUsername(username string) (bool, error)
 }
 
 //Writer user writer
@@ -37,4 +36,5 @@ type UseCase interface {
 	DeleteUser(username string) error
 	Login(username string, password string) (string, string, bool, error)
 	ValidatePassword(userID string, password string) (bool, error)
+	ValidateUsername(username string) (bool, error)
 }

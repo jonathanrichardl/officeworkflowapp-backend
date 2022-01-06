@@ -129,10 +129,16 @@ func (r *UserPSQL) Delete(username string) error {
 	return nil
 }
 
-func (r *UserPSQL) CustomQuery(query string) (*sql.Rows, error) {
-	rows, err := r.db.Query(query)
+func (r *UserPSQL) CheckUsername(username string) (bool, error) {
+	var exist int
+	stmt, err := r.db.Prepare("SELECT COUNT(1) FROM users WHERE username = $1 LIMIT 1")
 	if err != nil {
-		return nil, err
+		return false, err
 	}
-	return rows, nil
+	row := stmt.QueryRow(username)
+	row.Scan(&exist)
+	if exist == 0 {
+		return false, nil
+	}
+	return true, nil
 }
