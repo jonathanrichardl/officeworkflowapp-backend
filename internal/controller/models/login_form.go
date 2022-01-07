@@ -10,7 +10,11 @@ type Token struct {
 }
 
 type ChangePasswordForm struct {
-	UserID      string `json:"userid"`
 	OldPassword string `json:"password"`
 	NewPassword string `json:"new_password"`
+}
+
+type ChangeUsernameForm struct {
+	NewUsername string `json:"new_username"`
+	Password    string `json:"password"`
 }

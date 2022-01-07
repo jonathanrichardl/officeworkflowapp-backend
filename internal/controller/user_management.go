@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"order-validation-v2/internal/controller/models"
+
+	"github.com/gorilla/mux"
 )
 
 func (c *Controller) NewUser(w http.ResponseWriter, r *http.Request) {
@@ -53,4 +55,16 @@ func (c *Controller) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(response)
+}
+
+func (c *Controller) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	err := c.user.DeleteUser(mux.Vars(r)["id"])
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while deleting task : ", err.Error())
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	return
+
 }
