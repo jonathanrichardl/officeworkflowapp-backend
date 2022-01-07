@@ -62,6 +62,7 @@ func (c *Controller) ChangePassword(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("Invalid Old Password"))
+		return
 	}
 	w.WriteHeader(http.StatusUnauthorized)
 	w.Write([]byte("Invalid Old Password"))
