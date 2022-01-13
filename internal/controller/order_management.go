@@ -147,9 +147,51 @@ func (c *Controller) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (c *Controller) ModifyOrder(w http.ResponseWriter, r *http.Request) {
+	orderID := mux.Vars(r)["id"]
+	var patch models.OrderPatch
+	req, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+	}
+	err = json.Unmarshal(req, &patch)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+	}
+	orderDetail, err := c.order.GetOrder(orderID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		c.logger.ErrorLogger.Println("Error while retrieving order : ", err.Error())
+		w.Write([]byte("Internal Server Error"))
+	}
+	if patch.Deadline != nil {
+		orderDetail.Deadline, err = time.Parse("2/Jan/2006 15:04:05", *patch.Deadline)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			w.Write([]byte("Invalid Deadline Datetime Format"))
+			return
+		}
+	}
+	if patch.Description != nil {
+		orderDetail.Description = *patch.Description
+	}
+
+	if patch.Title != nil {
+		orderDetail.Title = *patch.Title
+	}
+
+	err = c.order.UpdateOrder(orderDetail)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Internal Server Error"))
+		c.logger.ErrorLogger.Println("Error while modifying order : ", err.Error())
+	}
+
+}
+
 func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) {
-	request := mux.Vars(r)
-	_ = request["id"]
 	var patches models.RequirementPatch
 	req, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -172,6 +214,11 @@ func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) 
 		if patch.ExpectedOutcome != nil {
 			r.ExpectedOutcome = *patch.ExpectedOutcome
 		}
+
+		if patch.Request != nil {
+			r.Request = *patch.Request
+		}
+
 		err = c.requirements.UpdateRequirement(r)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)

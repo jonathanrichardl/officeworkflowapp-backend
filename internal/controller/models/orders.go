@@ -10,6 +10,13 @@ type Orders struct {
 	Requirements []Requirements `json:"requirements"`
 }
 
+type OrderPatch struct {
+	ID          string  `json:"id"`
+	Title       *string `json:"title"`
+	Description *string `json:"description"`
+	Deadline    *string `json:"deadline"`
+}
+
 func BuildPayload(O []*entity.Orders) []*Orders {
 	var response []*Orders
 	for _, o := range O {

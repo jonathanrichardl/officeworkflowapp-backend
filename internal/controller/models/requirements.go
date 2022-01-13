@@ -16,6 +16,6 @@ type RequirementPatch struct {
 
 type Patch struct {
 	Id              int     `json:"id"`
-	UserID          *string `json:"user_id,omitempty"`
-	ExpectedOutcome *string `json:"outcome,omitempty"`
+	ExpectedOutcome *string `json:"new_outcome"`
+	Request         *string `json:"new_request"`
 }
