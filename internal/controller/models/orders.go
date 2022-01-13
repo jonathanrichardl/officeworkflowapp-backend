@@ -12,9 +12,9 @@ type Orders struct {
 
 type OrderPatch struct {
 	ID          string  `json:"id"`
-	Title       *string `json:"title"`
-	Description *string `json:"description"`
-	Deadline    *string `json:"deadline"`
+	Title       *string `json:"new_title"`
+	Description *string `json:"new_description"`
+	Deadline    *string `json:"new_deadline"`
 }
 
 func BuildPayload(O []*entity.Orders) []*Orders {

@@ -100,7 +100,7 @@ func (r *UserPSQL) Search(query string) ([]*entity.User, error) {
 }
 
 func (r *UserPSQL) List() ([]*entity.User, error) {
-	stmt, err := r.db.Prepare(`SELECT ID, username, email, user_role FROM users`)
+	stmt, err := r.db.Prepare(`SELECT ID, username, email, user_role FROM users ORDER BY username`)
 	if err != nil {
 		return nil, err
 	}

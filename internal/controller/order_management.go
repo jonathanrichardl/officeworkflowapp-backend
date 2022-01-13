@@ -188,6 +188,8 @@ func (c *Controller) ModifyOrder(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Internal Server Error"))
 		c.logger.ErrorLogger.Println("Error while modifying order : ", err.Error())
 	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Order Modified"))
 
 }
 
@@ -223,10 +225,39 @@ func (c *Controller) ModifyRequirements(w http.ResponseWriter, r *http.Request) 
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			c.logger.ErrorLogger.Println("Error updating requirement : ", err.Error())
-
+			return
 		}
 	}
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("Requirements Modified"))
 
+}
+
+func (c *Controller) AddNewRequirement(w http.ResponseWriter, r *http.Request) {
+	orderID := mux.Vars(r)["id"]
+	var newRequirement models.Requirements
+	req, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+	}
+	err = json.Unmarshal(req, &newRequirement)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request"))
+	}
+	_, err = c.order.GetOrder(orderID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("Invalid Request, Order Does Not Exist"))
+	}
+	_, err = c.requirements.CreateRequirement(newRequirement.Request, newRequirement.ExpectedOutcome, orderID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Unexpected Error"))
+	}
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte("Requirement Added"))
 }
 
 /*
