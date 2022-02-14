@@ -5,21 +5,18 @@ import (
 	"time"
 )
 
-//Reader interface
 type Reader interface {
 	Get(id string) (*entity.Orders, error)
 	Search(query string) ([]*entity.Orders, error)
 	List() ([]*entity.Orders, error)
 }
 
-//Writer book writer
 type Writer interface {
 	Create(e *entity.Orders) (string, error)
 	Update(e *entity.Orders) error
 	Delete(id string) error
 }
 
-//Repository interface
 type Repository interface {
 	Reader
 	Writer
